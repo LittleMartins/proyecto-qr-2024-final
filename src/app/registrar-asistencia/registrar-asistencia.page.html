@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Registrar Asistencia</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="!scannerEnabled" class="ion-padding">
+    <ion-button expand="block" (click)="iniciarEscaneoQR()">
+      <ion-icon name="scan-outline" slot="start"></ion-icon>
+      Escanear QR
+    </ion-button>
+  </div>
+
+  <div *ngIf="scannerEnabled" class="scan-box">
+    <div class="scanner-container">
+      <video #video [hidden]="!scannerEnabled"></video>
+      <canvas #canvas hidden></canvas>
+    </div>
+  </div>
+</ion-content>

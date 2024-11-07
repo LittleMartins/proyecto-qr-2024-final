@@ -1,0 +1,87 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Asistencias</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar color="light">
+    <ion-item>
+      <ion-label>Seleccionar Asistencia</ion-label>
+      <ion-select 
+        [(ngModel)]="asistenciaSeleccionada" 
+        (ionChange)="seleccionarAsistencia($event)"
+        placeholder="Seleccione una asistencia">
+        <ion-select-option *ngFor="let asistencia of asistencias$ | async" [value]="asistencia.id">
+          {{asistencia.asignatura}} - {{asistencia.fecha | date:'short'}}
+          ({{asistencia.activo ? 'Activo' : 'Finalizado'}})
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-toolbar>
+
+  <ion-toolbar color="light">
+    <ion-segment (ionChange)="cambiarFiltroEstado($event)" value="todos">
+      <ion-segment-button value="todos">
+        <ion-label>Todos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="activos">
+        <ion-label>Activos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="finalizados">
+        <ion-label>Finalizados</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="asistenciaActual$ | async as asistencia">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{asistencia.asignatura}}</ion-card-title>
+        <ion-card-subtitle>
+          Fecha: {{asistencia.fecha | date:'medium'}}
+          <br>
+          Estado: {{asistencia.activo ? 'Activo' : 'Finalizado'}}
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let alumno of asistencia.asistentes">
+            <ion-avatar slot="start">
+              <img [src]="alumno.profileImage" alt="Profile">
+            </ion-avatar>
+            <ion-label>
+              <h3>{{alumno.nombre}} {{alumno.apellido}}</h3>
+            </ion-label>
+            <ion-badge slot="end" [color]="alumno.registrado ? 'success' : 'danger'">
+              {{alumno.registrado ? 'Presente' : 'Ausente'}}
+            </ion-badge>
+            <ion-button fill="clear" slot="end" (click)="editarAsistencia(asistencia.id!, alumno.uid, alumno.registrado)">
+              <ion-icon name="create-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Mensaje cuando no hay asistencia seleccionada -->
+  <div class="no-results" *ngIf="!(asistenciaActual$ | async)">
+    <ion-text color="medium">
+      <h2>Seleccione una asistencia</h2>
+      <p>Use el menú desplegable para ver los detalles</p>
+    </ion-text>
+  </div>
+
+  <ion-button 
+    color="danger" 
+    *ngIf="asistenciaActual$ | async as asistencia"
+    [disabled]="!asistencia.activo"
+    (click)="finalizarAsistencia(asistencia.id!)">
+    Finalizar Asistencia
+  </ion-button>
+</ion-content>

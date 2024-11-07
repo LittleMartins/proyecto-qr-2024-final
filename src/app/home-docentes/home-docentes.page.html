@@ -1,0 +1,87 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title class="ion-text-center">
+      Home Docente
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline"></ion-icon>
+        Salir
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="welcome-card">
+    <h1>Bienvenido, {{ nombreCompleto }}</h1>
+    <p>¿Qué deseas hacer hoy?</p>
+    <p>Fecha y Hora: {{ currentDate | date: 'fullDate' }} - {{ currentDate | date: 'shortTime' }}</p>
+  </div>
+
+  <ion-grid>
+
+    <ion-col size="6">
+      <ion-card class="menu-card" routerLink="/mi-perfil">
+        <ion-card-content class="ion-text-center">
+          <ion-icon name="person-outline" class="card-icon"></ion-icon>
+          <h2>Perfil Docente</h2>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+
+
+    <ion-row>
+      <ion-col size="6">
+        <ion-card class="menu-card" routerLink="/asistencias">
+          <ion-card-content class="ion-text-center">
+            <ion-icon name="bookmarks-outline" class="card-icon"></ion-icon>
+            <h2>Registrar Asistencias</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      
+      <ion-col size="6">
+        <ion-card class="menu-card" routerLink="/generar-qr">
+          <ion-card-content class="ion-text-center">
+            <ion-icon name="qr-code-outline" class="card-icon"></ion-icon>
+            <h2>Generar Códigos QR</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-card class="info-card">
+    <form [formGroup]="nuevaActividadForm" (ngSubmit)="isEditing ? guardarActividad() : agregarActividad()">
+      <ion-item>
+        <ion-label position="floating">Título</ion-label>
+        <ion-input formControlName="titulo"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Descripción</ion-label>
+        <ion-input formControlName="descripcion"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Fecha</ion-label>
+        <ion-input type="date" formControlName="fecha"></ion-input>
+      </ion-item>
+      <ion-button expand="full" type="submit">
+        {{ isEditing ? 'Guardar' : 'Agregar Actividad' }}
+      </ion-button>
+    </form>
+  
+    <ion-list>
+      <ion-item *ngFor="let actividad of actividades$ | async">
+        <ion-label>
+          <h2>{{ actividad.titulo }}</h2>
+          <p>{{ actividad.descripcion }}</p>
+          <p>Fecha: {{ actividad.fecha | date: 'shortDate' }}</p>
+          <p>Estado: {{ actividad.estado }}</p>
+        </ion-label>
+        <ion-button (click)="eliminarActividad(actividad)">Eliminar</ion-button>
+        <ion-button (click)="actualizarActividad(actividad)">Actualizar</ion-button>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+</ion-content>

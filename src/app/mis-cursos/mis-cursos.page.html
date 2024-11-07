@@ -1,0 +1,141 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home-alumnos"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mis Cursos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  
+  <div class="courses-container">
+    <!-- Resumen de Asistencia -->
+    <ion-card class="attendance-summary">
+      <ion-card-content>
+        <div class="attendance-circle">
+          <circle-progress
+            [percent]="asistenciaTotal"
+            [radius]="60"
+            [outerStrokeWidth]="10"
+            [innerStrokeWidth]="5"
+            [outerStrokeColor]="'#4CAF50'"
+            [innerStrokeColor]="'#E0E0E0'"
+            [animation]="true"
+            [animationDuration]="300"
+            [subtitle]="'Asistencia Total'"
+          ></circle-progress>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-toolbar>
+      <ion-button expand="block" 
+                  (click)="irARegistrarAsistencia()" 
+                  class="registro-button">
+        <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+        Registrar Asistencia con QR
+      </ion-button>
+    </ion-toolbar>
+    <!-- Cursos -->
+    <div class="courses-grid">
+      <!-- Programación de Apps Móviles -->
+      <ion-card class="course-card" (click)="verDetallesCurso('apps')">
+        <div class="course-header apps-bg">
+          <ion-icon name="phone-portrait-outline"></ion-icon>
+        </div>
+        <ion-card-content>
+          <h2>Programación de Apps Móviles</h2>
+          <div class="course-stats">
+            <div class="stat">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>Lunes y Miércoles</span>
+            </div>
+            <div class="stat">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>08:30 - 10:50</span>
+            </div>
+            <div class="attendance-bar">
+              <div class="progress" style="width: 90%"></div>
+              <span>90% Asistencia</span>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Arquitectura -->
+      <ion-card class="course-card" (click)="verDetallesCurso('arquitectura')">
+        <div class="course-header architecture-bg">
+          <ion-icon name="business-outline"></ion-icon>
+        </div>
+        <ion-card-content>
+          <h2>Arquitectura</h2>
+          <div class="course-stats">
+            <div class="stat">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>Martes y Jueves</span>
+            </div>
+            <div class="stat">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>11:00 - 13:20</span>
+            </div>
+            <div class="attendance-bar">
+              <div class="progress" style="width: 85%"></div>
+              <span>85% Asistencia</span>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Estadística Descriptiva -->
+      <ion-card class="course-card" (click)="verDetallesCurso('estadistica')">
+        <div class="course-header statistics-bg">
+          <ion-icon name="stats-chart-outline"></ion-icon>
+        </div>
+        <ion-card-content>
+          <h2>Estadística Descriptiva</h2>
+          <div class="course-stats">
+            <div class="stat">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>Viernes</span>
+            </div>
+            <div class="stat">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>14:00 - 16:20</span>
+            </div>
+            <div class="attendance-bar">
+              <div class="progress" style="width: 75%"></div>
+              <span>75% Asistencia</span>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Calidad Software -->
+      <ion-card class="course-card" (click)="verDetallesCurso('calidad')">
+        <div class="course-header quality-bg">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <ion-card-content>
+          <h2>Calidad Software</h2>
+          <div class="course-stats">
+            <div class="stat">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>Martes y Jueves</span>
+            </div>
+            <div class="stat">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>16:30 - 18:50</span>
+            </div>
+            <div class="attendance-bar">
+              <div class="progress" style="width: 80%"></div>
+              <span>80% Asistencia</span>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+  <ion-footer class="ion-no-border">
+  </ion-footer>
+</ion-content>

@@ -1,0 +1,53 @@
+<!-- mi-perfil.page.html -->
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home-alumnos"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mi Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="profile-container">
+    <div class="profile-header">
+      <div class="image-container">
+        <ion-avatar class="profile-image">
+          <img [src]="profileImage" alt="profile">
+        </ion-avatar>
+        <ion-button class="camera-button" fill="clear" (click)="fileInput.click()">
+          <ion-icon name="camera"></ion-icon>
+        </ion-button>
+      </div>
+      <input type="file" #fileInput (change)="onFileSelected($event)" hidden accept="image/*">
+    </div>
+
+    <form [formGroup]="profileForm" (ngSubmit)="guardarCambios()">
+      <ion-list>
+        <ion-item>
+          <ion-label position="floating">Nombre</ion-label>
+          <ion-input type="text" formControlName="nombre"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Apellido</ion-label>
+          <ion-input type="text" formControlName="apellido"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Correo Electrónico</ion-label>
+          <ion-input type="email" formControlName="email"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Teléfono</ion-label>
+          <ion-input type="tel" formControlName="phone"></ion-input>
+        </ion-item>
+      </ion-list>
+
+      <div class="button-container">
+        <ion-button type="submit" expand="block">Guardar Cambios</ion-button>
+      </div>
+    </form>
+  </div>
+</ion-content>

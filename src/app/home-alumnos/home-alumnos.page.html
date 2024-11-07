@@ -1,0 +1,70 @@
+<!-- home-alumnos.page.html -->
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title class="ion-text-center">
+          Home Alumno
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline"></ion-icon>
+        Salir
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="welcome-card">
+    <h1>Bienvenido, {{nombreCompleto}}</h1>
+    <p>¿Qué deseas hacer hoy?</p>
+  </div>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-card class="menu-card" routerLink="/mi-perfil">
+          <ion-card-content class="ion-text-center">
+            <ion-icon name="person-outline" class="card-icon"></ion-icon>
+            <h2>Mi Perfil</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      
+      <ion-col size="6">
+        <ion-card class="menu-card" routerLink="/mis-cursos">
+          <ion-card-content class="ion-text-center">
+            <ion-icon name="book-outline" class="card-icon"></ion-icon>
+            <h2>Mis Cursos</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+    </ion-row>
+  </ion-grid>
+
+  <ion-card class="info-card">
+    <ion-card-header>
+      <ion-card-title>Próximas Actividades</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-icon name="time-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h2>Entrega de Proyecto</h2>
+            <p>Fecha límite: 1 de diciembre 2024 </p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="alarm-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h2>Examen Parcial Calidad Software</h2>
+            <p>5 de Junio</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-loading [isOpen]="isLoggingOut" message="Cerrando sesión..."></ion-loading>
+</ion-content>

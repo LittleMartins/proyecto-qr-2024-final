@@ -1,2 +1,13 @@
 // For information on how to create your own theme, please see:
 // http://ionicframework.com/docs/theming/
+
+// Agregar estas variables globales
+:root {
+  --animation-duration: 0.3s;
+  --animation-timing: cubic-bezier(0.4, 0, 0.2, 1);
+  --hover-transform: scale(1.02);
+  --active-transform: scale(0.98);
+  --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  --hover-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+  --gradient-primary: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
+}

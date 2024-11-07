@@ -1,0 +1,141 @@
+:root {
+  --primary-color: #4A90E2;
+  --secondary-color: #34495E;
+  --background-color: #F5F6FA;
+  --error-color: #E74C3C;
+  --success-color: #2ECC71;
+  --input-background: #ffffff;
+  --border-radius: 12px;
+  --gradient-background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+}
+
+ion-content {
+  --background: var(--gradient-background);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 0;
+}
+
+ion-toolbar {
+  --background: var(--primary-color);
+}
+
+ion-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+}
+
+.login-container {
+  max-width: 400px;
+  width: 100%;
+  margin: auto;
+  padding: 2rem;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.5s ease-out;
+  text-align: center;
+}
+
+.logo-container {
+  margin-bottom: 1.5rem;
+}
+
+.logo {
+  max-width: 120px;
+  margin: 0 auto;
+}
+
+ion-item {
+  --background: transparent;
+  --border-color: #ddd;
+  --border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+  --padding-start: 0;
+
+  &.item-has-focus {
+    --highlight-background: var(--primary-color);
+  }
+
+  ion-label {
+    color: var(--secondary-color);
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  ion-input {
+    --padding-start: 1rem;
+    --padding-end: 1rem;
+    background: var(--input-background);
+    border-radius: var(--border-radius);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 0.5rem;
+
+    &:focus {
+      background: white;
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+      transform: scale(1.03);
+      transition: all 0.2s ease-in-out;
+    }
+  }
+}
+
+.login-button {
+  --border-radius: var(--border-radius);
+  --box-shadow: 0 6px 15px rgba(74, 144, 226, 0.3);
+  margin-top: 2rem;
+  height: 50px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  color: white;
+
+  &:hover {
+    --background: #2ECC71;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(74, 144, 226, 0.4);
+    animation: buttonHover 0.3s ease;
+  }
+
+  &:active {
+    transform: scale(0.98);
+    --box-shadow: 0 3px 10px rgba(74, 144, 226, 0.2);
+  }
+}
+
+.validation-error {
+  color: var(--error-color);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  ion-title {
+    color: black;
+    font-size: 1.3rem;
+  }
+}

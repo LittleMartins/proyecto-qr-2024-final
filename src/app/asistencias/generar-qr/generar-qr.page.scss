@@ -1,0 +1,132 @@
+/* src/app/generar-qr/generar-qr.page.scss */
+ion-content {
+  --background: #f0f4f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 30px;
+}
+
+.welcome-card {
+  padding: 30px;
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  color: white;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  p {
+    margin: 10px 0 0;
+    opacity: 0.9;
+    font-size: 18px;
+  }
+}
+
+ion-item {
+  margin: 15px 0;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+ion-label {
+  font-size: 18px;
+  color: #333;
+}
+
+ion-select {
+  --background: #e7f3ff;
+  --color: #333;
+  --border-radius: 10px;
+}
+
+.qr-container {
+  margin: 30px 0;
+  text-align: center;
+
+  img {
+    border: 3px solid #007bff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    max-width: 100%;
+  }
+
+  p {
+    font-size: 18px;
+    color: #666;
+  }
+}
+
+ion-button {
+  margin-top: 15px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  box-shadow: 0 3px 8px rgba(0, 123, 255, 0.2);
+  transition: background-color 0.3s, transform 0.2s;
+
+  &:hover {
+    background-color: #0056b3;
+    transform: scale(1.03);
+  }
+}
+
+.cancellation-animation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  animation: fadeIn 0.5s, fadeOut 0.5s 1.5s forwards;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+}
+
+// Estilos para modo oscuro
+@media (prefers-color-scheme: dark) {
+  ion-content {
+    --background: var(--ion-color-dark);
+  }
+
+  .welcome-card {
+    background: var(--ion-color-dark-tint);
+    
+    h1 {
+      color: var(--ion-color-light);
+    }
+  }
+}

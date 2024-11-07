@@ -1,27 +1,76 @@
-#container {
+.login-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, #f4f5f8, #e4e5e9);
+  animation: fadeInUp 0.8s var(--animation-timing);
+}
+
+.login-form-container {
+  width: 90%;
+  max-width: 400px;
+}
+
+.login-card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  transition: transform var(--animation-duration) var(--animation-timing),
+              box-shadow var(--animation-duration) var(--animation-timing);
+  
+  &:hover {
+    transform: var(--hover-transform);
+    box-shadow: var(--hover-shadow);
+  }
+}
+
+.card-title {
   text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--ion-color-primary);
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
 }
 
-#container p {
+.role-button {
+  --border-radius: 8px;
+  height: 50px;
   font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
+  text-transform: none;
+  transition: all var(--animation-duration) var(--animation-timing);
+  overflow: hidden;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    top: 0;
+    left: -100%;
+    transform: skewX(-20deg);
+    transition: all 0.5s ease;
+  }
+  
+  &:hover::after {
+    left: 100%;
+  }
 }
 
-#container a {
-  text-decoration: none;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

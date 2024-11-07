@@ -1,0 +1,36 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Bienvenido</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="login-container">
+    <div class="logo-container">
+      <img src="assets/icon/duoc-uc-logo-1.png" alt="Logo" class="logo">
+    </div>
+    
+    <form (ngSubmit)="login()">
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input type="email" [(ngModel)]="credentials.email" name="email" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input type="password" [(ngModel)]="credentials.password" name="password" required></ion-input>
+      </ion-item>
+
+      <div *ngIf="errorMessage" class="validation-error">
+        {{ errorMessage }}
+      </div>
+
+      <ion-button expand="full" type="submit" class="login-button" [@buttonAnimation]>
+        Iniciar Sesión
+      </ion-button>
+    </form>
+  </div>
+</ion-content>

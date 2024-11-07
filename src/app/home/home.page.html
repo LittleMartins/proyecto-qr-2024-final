@@ -1,20 +1,29 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Ingreso</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+<ion-content>
+  <div class="login-container">
+    <div class="login-form-container">
+      <ion-card class="login-card">
+        <ion-card-header>
+          <ion-card-title class="card-title">RegistraApp</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="button-group">
+            <ion-button expand="full" class="role-button" (click)="navigateTo('/login-alumno')">
+              <ion-icon name="school-outline" slot="start"></ion-icon>
+              Alumno
+            </ion-button>
+            <ion-button expand="full" class="role-button" (click)="navigateTo('/login-docente')">
+              <ion-icon name="person-outline" slot="start"></ion-icon>
+              Docente
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
   </div>
 </ion-content>

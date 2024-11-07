@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Generar QR</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- QR en pantalla completa -->
+  <div class="qr-fullscreen" *ngIf="qrSeleccionado" (click)="cerrarQRCompleto()">
+    <h2 class="qr-title">Registrar asistencia: {{asistenciaSeleccionada?.asignatura}}</h2>
+    <img [src]="qrSeleccionado" alt="QR Code">
+    <ion-text color="light">Toca en cualquier lugar para cerrar</ion-text>
+  </div>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Generar Código QR</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Duración (minutos)</ion-label>
+        <ion-input type="number" [(ngModel)]="duracionSeleccionada"></ion-input>
+      </ion-item>
+
+      <ion-list>
+        <ion-item *ngFor="let asignatura of asignaturas">
+          <ion-label>{{asignatura}}</ion-label>
+          <ion-button slot="end" (click)="generarQR(asignatura)">
+            Generar QR
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>QRs Generados</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let asistencia of asistencias">
+          <ion-thumbnail slot="start" (click)="mostrarQRCompleto(asistencia)" class="qr-thumbnail">
+            <img [src]="asistencia.codigoQR" alt="QR Code">
+          </ion-thumbnail>
+          <ion-label>
+            <h2>{{asistencia.asignatura}}</h2>
+            <p>Fecha: {{asistencia.fecha | date:'medium'}}</p>
+            <p>Estado: {{asistencia.activo ? 'Activo' : 'Expirado'}}</p>
+          </ion-label>
+          <ion-button slot="end" color="danger" (click)="eliminarAsistencia(asistencia.id!)">
+            <ion-icon name="trash"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
