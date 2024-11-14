@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { GenerarQrPageRoutingModule } from './generar-qr-routing.module';
+import { NotFoundPageRoutingModule } from './not-found-routing.module';
 
-import { GenerarQrPage } from './generar-qr.page';
+import { NotFoundPage } from './not-found.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    GenerarQrPageRoutingModule
+    NotFoundPageRoutingModule
   ],
-  declarations: [GenerarQrPage]
+  declarations: [NotFoundPage]
 })
-export class GenerarQrPageModule {}
+export class NotFoundPageModule {}

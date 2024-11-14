@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { GenerarQrPage } from './generar-qr.page';
+import { HorarioPage } from './horario.page';
 
-describe('GenerarQrPage', () => {
-  let component: GenerarQrPage;
-  let fixture: ComponentFixture<GenerarQrPage>;
+describe('HorarioPage', () => {
+  let component: HorarioPage;
+  let fixture: ComponentFixture<HorarioPage>;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GenerarQrPage);
+    fixture = TestBed.createComponent(HorarioPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

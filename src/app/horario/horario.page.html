@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home-alumnos"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mi Horario</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Vista semanal -->
+  <ion-segment scrollable [(ngModel)]="diaActual" (ionChange)="cambiarDia($event)" mode="ios">
+    <ion-segment-button *ngFor="let dia of diasSemana" [value]="dia">
+      <ion-label>{{dia}}</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Horario del día seleccionado -->
+  <div *ngFor="let dia of diasSemana">
+    <div *ngIf="esDiaActual(dia)" class="dia-container">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title class="ion-text-center">
+            <ion-text color="primary">{{dia}}</ion-text>
+          </ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <ion-list>
+            <ion-item *ngFor="let clase of getClasesPorDia(dia)" lines="full" class="clase-item">
+              <ion-label>
+                <h2 class="asignatura-titulo">{{clase.asignatura}}</h2>
+                <p>
+                  <ion-icon name="time-outline" color="primary"></ion-icon>
+                  {{clase.horaInicio}} - {{clase.horaFin}}
+                </p>
+                <p>
+                  <ion-icon name="location-outline" color="primary"></ion-icon>
+                  {{clase.sala}}
+                </p>
+                <p>
+                  <ion-icon name="person-outline" color="primary"></ion-icon>
+                  {{clase.profesor}}
+                </p>
+              </ion-label>
+              <ion-badge slot="end" [color]="clase.horaInicio < '12:00' ? 'success' : 'warning'">
+                {{clase.horaInicio < '12:00' ? 'AM' : 'PM'}}
+              </ion-badge>
+            </ion-item>
+
+            <ion-item *ngIf="getClasesPorDia(dia).length === 0" lines="none">
+              <ion-label class="ion-text-center">
+                <ion-icon name="calendar-clear-outline" size="large" color="medium"></ion-icon>
+                <p>No hay clases programadas para este día</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

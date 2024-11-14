@@ -56,18 +56,31 @@ const routes: Routes = [
   },
 
   {
-    path: '**',  // Ruta wildcard para capturar navegaciones no válidas
-    redirectTo: 'home'
+    path: 'recover-password',
+    loadChildren: () => import('./recover-password/recover-password.module').then( m => m.RecoverPasswordPageModule)
   },
-  
+  {
+    path: 'not-found',
+    loadChildren: () => import('./not-found/not-found.module').then( m => m.NotFoundPageModule)
+  },
+  {
+    path: 'horario',
+    loadChildren: () => import('./horario/horario.module').then( m => m.HorarioPageModule)
+  },
+  {
+    path: 'calificaciones',
+    loadChildren: () => import('./calificaciones/calificaciones.module').then( m => m.CalificacionesPageModule)
+  },
+  {
+    path: '**',  // Ruta wildcard para capturar navegaciones no válidas
+    redirectTo: 'not-found'
+  },
+
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { 
-      preloadingStrategy: PreloadAllModules,
-      enableTracing: false  // Cambiado a false para reducir los logs
-    })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
   exports: [RouterModule]
 })

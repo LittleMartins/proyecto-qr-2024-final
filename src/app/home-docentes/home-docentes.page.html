@@ -14,24 +14,34 @@
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="welcome-card">
-    <h1>Bienvenido, {{ nombreCompleto }}</h1>
-    <p>¿Qué deseas hacer hoy?</p>
-    <p>Fecha y Hora: {{ currentDate | date: 'fullDate' }} - {{ currentDate | date: 'shortTime' }}</p>
+    <ion-row class="ion-align-items-center">
+      <ion-col size="8">
+        <h1>Bienvenido, {{ nombreCompleto }}</h1>
+        <p>¿Qué deseas hacer hoy?</p>
+        <p>Fecha y Hora: {{ currentDate | date: 'fullDate' }} - {{ currentDate | date: 'shortTime' }}</p>
+      </ion-col>
+      <ion-col size="4">
+        <ion-card class="profile-card" routerLink="/mi-perfil">
+          <ion-card-content class="ion-text-center">
+            <ion-icon name="person-circle-outline" class="profile-icon"></ion-icon>
+            <h3>Mi Perfil</h3>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
   </div>
 
   <ion-grid>
-
-    <ion-col size="6">
-      <ion-card class="menu-card" routerLink="/mi-perfil">
-        <ion-card-content class="ion-text-center">
-          <ion-icon name="person-outline" class="card-icon"></ion-icon>
-          <h2>Perfil Docente</h2>
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-
-
     <ion-row>
+      <ion-col size="6">
+        <ion-card class="menu-card" routerLink="/generar-qr">
+          <ion-card-content class="ion-text-center">
+            <ion-icon name="qr-code-outline" class="card-icon"></ion-icon>
+            <h2>Generar QR</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      
       <ion-col size="6">
         <ion-card class="menu-card" routerLink="/asistencias">
           <ion-card-content class="ion-text-center">
@@ -40,48 +50,94 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
-      
-      <ion-col size="6">
-        <ion-card class="menu-card" routerLink="/generar-qr">
-          <ion-card-content class="ion-text-center">
-            <ion-icon name="qr-code-outline" class="card-icon"></ion-icon>
-            <h2>Generar Códigos QR</h2>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
     </ion-row>
   </ion-grid>
 
   <ion-card class="info-card">
+    <div class="card-header">
+      <h2>{{ isEditing ? 'Editar Actividad' : 'Nueva Actividad' }}</h2>
+      <p>{{ isEditing ? 'Modifica los datos de la actividad' : 'Ingresa los datos para crear una nueva actividad' }}</p>
+    </div>
+    
     <form [formGroup]="nuevaActividadForm" (ngSubmit)="isEditing ? guardarActividad() : agregarActividad()">
       <ion-item>
-        <ion-label position="floating">Título</ion-label>
-        <ion-input formControlName="titulo"></ion-input>
+        <ion-label position="stacked">Título</ion-label>
+        <ion-input 
+          formControlName="titulo" 
+          placeholder="Ingresa el título de la actividad"
+          type="text">
+        </ion-input>
       </ion-item>
+
       <ion-item>
-        <ion-label position="floating">Descripción</ion-label>
-        <ion-input formControlName="descripcion"></ion-input>
+        <ion-label position="stacked">Descripción</ion-label>
+        <ion-textarea 
+          formControlName="descripcion" 
+          placeholder="Describe la actividad"
+          rows="3">
+        </ion-textarea>
       </ion-item>
+
       <ion-item>
-        <ion-label position="floating">Fecha</ion-label>
-        <ion-input type="date" formControlName="fecha"></ion-input>
+        <ion-label position="stacked">Fecha</ion-label>
+        <ion-input 
+          type="date" 
+          formControlName="fecha">
+        </ion-input>
       </ion-item>
-      <ion-button expand="full" type="submit">
-        {{ isEditing ? 'Guardar' : 'Agregar Actividad' }}
-      </ion-button>
+
+      <ion-item>
+        <ion-label position="stacked">Estado</ion-label>
+        <ion-select formControlName="estado" interface="popover">
+          <ion-select-option value="pendiente">Pendiente</ion-select-option>
+          <ion-select-option value="completada">Completada</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <div class="form-buttons">
+        <ion-button 
+          *ngIf="isEditing" 
+          type="button" 
+          fill="outline" 
+          (click)="resetForm()">
+          Cancelar
+        </ion-button>
+        
+        <ion-button type="submit" expand="block">
+          {{ isEditing ? 'Guardar Cambios' : 'Crear Actividad' }}
+        </ion-button>
+      </div>
     </form>
-  
+
     <ion-list>
-      <ion-item *ngFor="let actividad of actividades$ | async">
+      <ion-item *ngFor="let actividad of actividades$ | async; trackBy: trackByFn">
         <ion-label>
           <h2>{{ actividad.titulo }}</h2>
           <p>{{ actividad.descripcion }}</p>
-          <p>Fecha: {{ actividad.fecha | date: 'shortDate' }}</p>
-          <p>Estado: {{ actividad.estado }}</p>
+          <p class="fecha">{{ actividad.fecha | date: 'fullDate' }}</p>
+          <div class="estado-container">
+            <ion-chip [class]="actividad.estado" (click)="cambiarEstado(actividad)">
+              <ion-icon [name]="actividad.estado === 'completada' ? 'checkmark-circle' : 'time'"></ion-icon>
+              <ion-label>{{ actividad.estado | titlecase }}</ion-label>
+            </ion-chip>
+          </div>
         </ion-label>
-        <ion-button (click)="eliminarActividad(actividad)">Eliminar</ion-button>
-        <ion-button (click)="actualizarActividad(actividad)">Actualizar</ion-button>
+        
+        <div class="item-buttons" slot="end">
+          <ion-button 
+            class="update-button" 
+            (click)="actualizarActividad(actividad)">
+            <ion-icon name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button 
+            class="delete-button" 
+            (click)="eliminarActividad(actividad)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
       </ion-item>
     </ion-list>
   </ion-card>
 </ion-content>
+
+<ion-loading [isOpen]="isLoggingOut" message="Cerrando sesión..."></ion-loading>

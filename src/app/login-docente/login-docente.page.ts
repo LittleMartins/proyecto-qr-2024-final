@@ -16,6 +16,12 @@ export class LoginDocentePage {
   
   errorMessage: string = '';
 
+  showPassword = false;
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
+
   constructor(
     private authService: AuthService,
     private loadingController: LoadingController,
@@ -49,6 +55,7 @@ export class LoginDocentePage {
       await loading.dismiss();
       
       if (result && result.user) {
+        await loading.dismiss();
         if (this.credentials.email === 'ronald.villalobos@gmail.com') {
           console.log('Usuario autenticado, navegando a home-docentes');
           await this.router.navigate(['/home-docentes']);
@@ -66,8 +73,8 @@ export class LoginDocentePage {
         this.errorMessage = 'Error al autenticar el usuario';
       }
     } catch (error: any) {
-      console.error('Error completo del login:', error);
       await loading.dismiss();
+      console.error('Error completo del login:', error);
 
       switch (error.code) {
         case 'auth/user-not-found':
@@ -93,5 +100,9 @@ export class LoginDocentePage {
       });
       await alert.present();
     }
+  }
+
+  async recoverPassword() {
+    await this.navController.navigateForward('/recover-password');
   }
 }

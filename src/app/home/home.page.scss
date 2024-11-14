@@ -1,76 +1,187 @@
-.login-container {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(to bottom, #f4f5f8, #e4e5e9);
-  animation: fadeInUp 0.8s var(--animation-timing);
+:host {
+  --primary-color: #000000;
+  --secondary-color: #002A5C;
+  --accent-color: #FFB800;
+  --background-light: #F5F7FA;
+  --text-dark: #1A1A1A;
+  --text-light: #FFFFFF;
+  --shadow-color: rgba(0, 0, 1, 0.1);
 }
 
-.login-form-container {
-  width: 90%;
-  max-width: 400px;
-}
-
-.login-card {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  transition: transform var(--animation-duration) var(--animation-timing),
-              box-shadow var(--animation-duration) var(--animation-timing);
-  
-  &:hover {
-    transform: var(--hover-transform);
-    box-shadow: var(--hover-shadow);
-  }
-}
-
-.card-title {
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--ion-color-primary);
-}
-
-.button-group {
+.main-container {
+  min-height: 100%;
+  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-top: 20px;
+  padding: 20px;
 }
 
-.role-button {
-  --border-radius: 8px;
-  height: 50px;
-  font-size: 16px;
-  text-transform: none;
-  transition: all var(--animation-duration) var(--animation-timing);
-  overflow: hidden;
-  position: relative;
+// Header Section
+.header-section {
+  text-align: center;
+  padding: 40px 20px;
+  margin-bottom: 20px;
   
-  &::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.1);
-    top: 0;
-    left: -100%;
-    transform: skewX(-20deg);
-    transition: all 0.5s ease;
+  .logo {
+    width: 140px;
+    height: auto;
+    margin-bottom: 20px;
+    animation: fadeInDown 0.8s ease;
   }
   
-  &:hover::after {
-    left: 100%;
+  h1 {
+    color: var(--text-light);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease;
+  }
+  
+  p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    margin-top: 8px;
+    font-weight: 400;
+    animation: fadeIn 1.2s ease;
   }
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+// Cards Container
+.cards-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 10px;
+  animation: slideUp 0.8s ease;
+}
+
+// Access Cards
+.access-card {
+  background: var(--text-light);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8px 24px var(--shadow-color);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  .card-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  .icon-container {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    ion-icon {
+      font-size: 24px;
+      color: var(--text-light);
+    }
   }
+  
+  .text-container {
+    h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+    
+    p {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  }
+  
+  .card-arrow {
+    color: #999;
+    font-size: 20px;
+    transition: transform 0.3s ease;
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+  
+  &.student {
+    .icon-container {
+      background: linear-gradient(135deg, var(--primary-color), #0063CE);
+    }
+    
+    &:hover {
+      box-shadow: 0 12px 32px rgba(0, 74, 173, 0.2);
+      .card-arrow {
+        transform: translateX(4px);
+      }
+    }
+  }
+  
+  &.teacher {
+    .icon-container {
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    }
+    
+    &:hover {
+      box-shadow: 0 12px 32px rgba(0, 42, 92, 0.2);
+      .card-arrow {
+        transform: translateX(4px);
+      }
+    }
+  }
+}
+
+// Footer
+.footer {
+  text-align: center;
+  padding: 20px 0 0;
+  
+  p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+ 
+ion-title{
+  font-size: rem;
+  font-weight: 700;
+  justify-content: center;
+  display: flex;
+}
+
+p{
+  font-size: 1.2rem;
+  font-weight: 400;
+  justify-content: center;
+  display: flex;
+  color: #FFFFFF;
+  font-family: 'Poppins', sans-serif;
 }

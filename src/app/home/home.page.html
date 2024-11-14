@@ -1,29 +1,51 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Ingreso</ion-title>
-  </ion-toolbar>
-</ion-header>
 
 <ion-content>
-  <div class="login-container">
-    <div class="login-form-container">
-      <ion-card class="login-card">
-        <ion-card-header>
-          <ion-card-title class="card-title">RegistraApp</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="button-group">
-            <ion-button expand="full" class="role-button" (click)="navigateTo('/login-alumno')">
-              <ion-icon name="school-outline" slot="start"></ion-icon>
-              Alumno
-            </ion-button>
-            <ion-button expand="full" class="role-button" (click)="navigateTo('/login-docente')">
-              <ion-icon name="person-outline" slot="start"></ion-icon>
-              Docente
-            </ion-button>
+  <div class="main-container">
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="title-container">
+        <h1>RegistrAPP</h1>
+      </div>
+    </div>
+    <p>Selecciona tu perfil de acceso</p>
+    <!-- Cards Section -->
+    <div class="cards-container">
+      <!-- Student Card -->
+      <div class="access-card student" (click)="navigateTo('/login-alumno')">
+        <div class="card-content">
+          <div class="icon-container">
+            <ion-icon name="school-outline"></ion-icon>
           </div>
-        </ion-card-content>
-      </ion-card>
+          <div class="text-container">
+            <h2>Estudiante</h2>
+            <p>Registra tu asistencia a clases</p>
+          </div>
+        </div>
+        <div class="card-arrow">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </div>
+      </div>
+
+      <!-- Teacher Card -->
+      <div class="access-card teacher" (click)="navigateTo('/login-docente')">
+        <div class="card-content">
+          <div class="icon-container">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+          <div class="text-container">
+            <h2>Docente</h2>
+            <p>Gestiona la asistencia de tus cursos</p>
+          </div>
+        </div>
+        <div class="card-arrow">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>Version 1.0.0</p>
     </div>
   </div>
 </ion-content>

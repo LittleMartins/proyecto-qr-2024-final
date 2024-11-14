@@ -2,10 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FirebaseService } from '../services/firebase.service';
 import { ToastController } from '@ionic/angular';
 import { UserData } from '../interfaces/user-data.interface';
-import { DocumentSnapshot, DocumentData } from 'firebase/firestore';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Auth } from '@angular/fire/auth';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 
@@ -52,7 +49,6 @@ export class MiPerfilPage implements OnInit {
               this.userData = doc.data();
               this.profileImage = this.userData.profileImage || 'https://ionicframework.com/docs/img/demos/avatar.svg';
               
-              // Actualizar todos los campos del formulario
               this.profileForm.patchValue({
                 nombre: this.userData.nombre || '',
                 apellido: this.userData.apellido || '',
@@ -81,19 +77,37 @@ export class MiPerfilPage implements OnInit {
       const reader = new FileReader();
       reader.onload = () => {
         if (reader.result) {
-          this.profileImage = reader.result;
+          this.compressImage(reader.result as string, 0.7, (compressedImage) => {
+            this.profileImage = compressedImage;
+          });
         }
       };
       reader.readAsDataURL(file);
     }
   }
 
+  compressImage(base64: string, quality: number, callback: (compressed: string) => void) {
+    const img = new Image();
+    img.src = base64;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+      const width = img.width;
+      const height = img.height;
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(img, 0, 0, width, height);
+      const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+      callback(compressedBase64);
+    };
+  }
+  
   async onSubmit() {
     if (!this.profileForm.valid) {
       this.presentToast('Por favor completa todos los campos requeridos');
       return;
     }
-
+  
     this.isLoading = true;
     const user = await this.firebaseService.getCurrentUser();
     
@@ -105,15 +119,16 @@ export class MiPerfilPage implements OnInit {
           phone: this.userData.phone,
           updatedAt: new Date()
         };
-
+  
         if (this.profileImage !== this.userData.profileImage) {
+          // Subir la imagen a Firebase Storage
           const imageUrl = await this.firebaseService.uploadProfileImage(
             user.uid,
             this.profileImage as string
           );
-          updateData.profileImage = imageUrl;
+          updateData.profileImage = imageUrl; // Guardar solo la URL en Firestore
         }
-
+  
         await this.firebaseService.updateUserProfile(user.uid, updateData);
         
         this.presentToast('Perfil actualizado exitosamente');
@@ -133,7 +148,6 @@ export class MiPerfilPage implements OnInit {
         throw new Error('No hay usuario autenticado');
       }
 
-      // Usamos el UID del usuario como identificador del documento
       const perfilRef = doc(this.angularFirestore, 'users', usuario.uid);
       await setDoc(perfilRef, {
         nombre: this.profileForm.get('nombre')?.value || '',

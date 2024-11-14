@@ -46,7 +46,17 @@ export class AsistenciasPage implements OnInit {
     this.asistencias$ = this.obtenerAsistenciasFiltradas();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.asistencias$.subscribe(asistencias => {
+      const primeraAsistenciaFiltrada = asistencias[0];
+      if (primeraAsistenciaFiltrada?.id) {
+        this.asistenciaSeleccionada = primeraAsistenciaFiltrada.id;
+        this.asistenciaActual$.next(primeraAsistenciaFiltrada);
+      } else {
+        this.asistenciaSeleccionada = null;
+      }
+    });
+  }
 
   private obtenerAsistenciasConUsuarios(): Observable<AsistenciaConUsuarios[]> {
     const asistencias$ = this.firestore.collection<Asistencia>('asistencias')
@@ -79,12 +89,19 @@ export class AsistenciasPage implements OnInit {
       this.filtroEstado$
     ]).pipe(
       map(([asistencias, estado]) => {
-        return asistencias
-          .filter(asistencia => {
-            if (estado === 'todos') return true;
-            return estado === 'activos' ? asistencia.activo : !asistencia.activo;
-          })
-          .sort((a, b) => b.fecha.getTime() - a.fecha.getTime());
+        let asistenciasFiltradas = asistencias;
+        
+        switch (estado) {
+          case 'activos':
+            asistenciasFiltradas = asistencias.filter(a => a.activo === true);
+            break;
+          case 'finalizados':
+            asistenciasFiltradas = asistencias.filter(a => a.activo === false);
+            break;
+          // caso 'todos' no necesita filtro
+        }
+        
+        return asistenciasFiltradas.sort((a, b) => b.fecha.getTime() - a.fecha.getTime());
       })
     );
   }
@@ -167,12 +184,47 @@ export class AsistenciasPage implements OnInit {
           handler: async () => {
             try {
               await this.firestore.collection('asistencias').doc(asistenciaId).update({
-                activo: false
+                activo: false,
+                codigoQR: ''
               });
+              this.filtroEstado$.next('finalizados');
               this.mostrarMensaje('Asistencia finalizada correctamente');
             } catch (error) {
               console.error('Error al finalizar asistencia:', error);
               this.mostrarMensaje('Error al finalizar la asistencia', 'danger');
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async activarAsistencia(asistenciaId?: string) {
+    if (!asistenciaId) return;
+    
+    const alert = await this.alertController.create({
+      header: 'Reanudar Clase',
+      message: '¿Está seguro que desea reanudar esta clase?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Confirmar',
+          handler: async () => {
+            try {
+              const nuevoCodigoQR = Math.random().toString(36).substring(2, 15);
+              await this.firestore.collection('asistencias').doc(asistenciaId).update({
+                activo: true,
+                codigoQR: nuevoCodigoQR
+              });
+              this.mostrarMensaje('Clase reanudada correctamente');
+            } catch (error) {
+              console.error('Error al reanudar la clase:', error);
+              this.mostrarMensaje('Error al reanudar la clase', 'danger');
             }
           }
         }

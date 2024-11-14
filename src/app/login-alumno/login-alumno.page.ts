@@ -13,7 +13,9 @@ export class LoginAlumnoPage {
     password: ''
   };
   
-  errorMessage: string = ''; // Añadida la propiedad errorMessage
+  errorMessage: string = '';
+  showPassword = false;
+  isLoading = false;
 
   constructor(
     private authService: AuthService,
@@ -23,15 +25,7 @@ export class LoginAlumnoPage {
   ) {}
 
   async login() {
-    // Limpiar mensaje de error previo
-    this.errorMessage = '';
-
-    // Validaciones básicas
-    if (!this.credentials.email || !this.credentials.password) {
-      this.errorMessage = 'Por favor, completa todos los campos';
-      return;
-    }
-
+    this.isLoading = true;
     const loading = await this.loadingController.create({
       message: 'Iniciando sesión...',
       spinner: 'crescent'
@@ -39,6 +33,14 @@ export class LoginAlumnoPage {
     await loading.present();
 
     try {
+      this.errorMessage = '';
+
+      if (!this.credentials.email || !this.credentials.password) {
+        this.errorMessage = 'Por favor, completa todos los campos';
+        await loading.dismiss();
+        return;
+      }
+
       console.log('Intentando login con:', this.credentials.email);
       const result = await this.authService.loginWithEmail(
         this.credentials.email,
@@ -46,17 +48,15 @@ export class LoginAlumnoPage {
       );
       
       console.log('Resultado del login:', result);
-      await loading.dismiss();
       
       if (result.user) {
+        await loading.dismiss();
         console.log('Usuario autenticado, navegando a home-alumnos');
         await this.navController.navigateRoot('/home-alumnos');
       }
     } catch (error: any) {
-      console.error('Error completo del login:', error);
       await loading.dismiss();
-
-      // Manejar diferentes tipos de errores
+      
       switch (error.code) {
         case 'auth/user-not-found':
           this.errorMessage = 'No existe una cuenta con este correo electrónico';
@@ -80,6 +80,16 @@ export class LoginAlumnoPage {
         buttons: ['OK']
       });
       await alert.present();
+    } finally {
+      this.isLoading = false;
     }
+  }
+
+  async recoverPassword() {
+    await this.navController.navigateForward('/recover-password');
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 }

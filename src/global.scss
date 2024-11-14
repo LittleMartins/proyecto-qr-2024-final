@@ -35,3 +35,56 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+// Configuración base para las transiciones de página
+ion-router-outlet {
+  > div {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Animación mejorada para cambios de página
+.ion-page {
+  visibility: visible;
+  opacity: 1;
+  z-index: 1;
+  transform: translateX(0);
+  transition: all 0.2s ease-out;
+
+  &.ion-page-invisible {
+    opacity: 0;
+    transform: translateX(30px);
+    z-index: 0;
+    visibility: hidden;
+  }
+}
+
+// Prevenir interacciones durante la transición
+.ion-page-transitioning {
+  pointer-events: none !important;
+}
+
+// Asegurar que los elementos no se superpongan
+ion-content {
+  visibility: visible;
+  opacity: 1;
+  
+  &.content-leaving {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  
+  &.content-entering {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Optimización de rendimiento general
+* {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}

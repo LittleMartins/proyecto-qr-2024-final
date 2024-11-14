@@ -1,0 +1,93 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home-alumnos"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mis Calificaciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ng-container *ngIf="calificaciones$ | async as calificaciones; else noData">
+    <!-- Resumen de Calificaciones -->
+    <ion-card class="summary-card">
+      <ion-card-content>
+        <div class="summary-header">
+          <h1>Resumen Académico</h1>
+          <ion-chip color="primary" outline>
+            <ion-label>Semestre 2024-1</ion-label>
+          </ion-chip>
+        </div>
+        <div class="promedio-general">
+          <div class="promedio-circle" [ngClass]="getColorNota(promedioGeneral)">
+            {{promedioGeneral}}
+          </div>
+          <p>Promedio General</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Detalle de Calificaciones -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Detalle de Calificaciones</ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-label>
+              <h2>Parcial 1</h2>
+            </ion-label>
+            <ion-chip [color]="getColorNota(calificaciones.parcial1)" slot="end">
+              <ion-label>{{calificaciones.parcial1}}</ion-label>
+            </ion-chip>
+          </ion-item>
+
+          <ion-item>
+            <ion-label>
+              <h2>Parcial 2</h2>
+            </ion-label>
+            <ion-chip [color]="getColorNota(calificaciones.parcial2)" slot="end">
+              <ion-label>{{calificaciones.parcial2}}</ion-label>
+            </ion-chip>
+          </ion-item>
+
+          <ion-item>
+            <ion-label>
+              <h2>Parcial 3</h2>
+            </ion-label>
+            <ion-chip [color]="getColorNota(calificaciones.parcial3)" slot="end">
+              <ion-label>{{calificaciones.parcial3}}</ion-label>
+            </ion-chip>
+          </ion-item>
+
+          <ion-item>
+            <ion-label>
+              <h2>Examen Final</h2>
+            </ion-label>
+            <ion-chip [color]="getColorNota(calificaciones.examen)" slot="end">
+              <ion-label>{{calificaciones.examen}}</ion-label>
+            </ion-chip>
+          </ion-item>
+        </ion-list>
+
+        <ion-text color="medium" class="ion-padding-top">
+          <p class="ion-text-center">
+            Última actualización: {{calificaciones.fechaActualizacion | date:'dd/MM/yyyy HH:mm'}}
+          </p>
+        </ion-text>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+
+  <ng-template #noData>
+    <ion-card>
+      <ion-card-content class="ion-text-center">
+        <ion-icon name="alert-circle-outline" color="medium" style="font-size: 48px;"></ion-icon>
+        <h2>No hay calificaciones disponibles</h2>
+        <p>Las calificaciones se mostrarán aquí cuando estén registradas.</p>
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
+</ion-content>

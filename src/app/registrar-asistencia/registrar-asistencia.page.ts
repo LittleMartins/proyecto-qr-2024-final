@@ -1,10 +1,31 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { Platform, ToastController } from '@ionic/angular';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { AuthService } from '../services/auth.service';
-import { Platform } from '@ionic/angular';
+
+interface Asistencia {
+  asignatura: string;
+  fecha: Date;
+  activo: boolean;
+  asistentes: string[];
+  codigoQR: string;
+  duracion: number;
+}
+
+interface RegistroAsistencia {
+  nombre: string;
+  fecha: Date;
+  estado: 'success' | 'error';
+}
+
+interface Usuario {
+  uid: string;
+  nombre: string;
+  email: string;
+  rol?: string;
+}
 
 @Component({
   selector: 'app-registrar-asistencia',
@@ -12,90 +33,152 @@ import { Platform } from '@ionic/angular';
   styleUrls: ['./registrar-asistencia.page.scss'],
 })
 export class RegistrarAsistenciaPage {
-  escanerActivo = false;
-  scannerEnabled: boolean = false;
+  escanerActivo: boolean = false;
+  permisosCamara: boolean = false;
+  userId: string | null = null;
+  ultimosRegistros: RegistroAsistencia[] = [];
 
   constructor(
-    private router: Router,
-    private alertController: AlertController,
+    private platform: Platform,
+    private toastController: ToastController,
     private firestore: AngularFirestore,
-    private authService: AuthService,
-    private platform: Platform
+    private authService: AuthService
   ) {
-    console.log('Página de escaneo inicializada');
+    this.inicializarUsuario();
+    this.cargarUltimosRegistros();
+  }
+
+  async inicializarUsuario() {
+    const user = await this.authService.getCurrentUser();
+    if (user) {
+      this.userId = user.uid;
+      this.cargarUltimosRegistros();
+    }
+  }
+
+  cargarUltimosRegistros() {
+    if (!this.userId) return;
+
+    this.firestore
+      .collection('asistencias', ref => 
+        ref.where('asistentes', 'array-contains', this.userId)
+           .orderBy('fecha', 'desc')
+           .limit(5)
+      )
+      .snapshotChanges()
+      .subscribe(docs => {
+        this.ultimosRegistros = docs.map(doc => {
+          const data = doc.payload.doc.data() as Asistencia;
+          return {
+            nombre: data.asignatura,
+            fecha: data.fecha instanceof Date ? data.fecha : (data.fecha as Timestamp).toDate(),
+            estado: 'success'
+          };
+        });
+      }, error => {
+        console.error('Error al cargar registros:', error);
+      });
+  }
+
+  async registrarAsistencia(asistenciaId: string) {
+    try {
+      if (!this.userId) {
+        throw new Error('Usuario no autenticado');
+      }
+
+      const asistenciaRef = this.firestore.collection('asistencias').doc(asistenciaId);
+      const doc = await asistenciaRef.get().toPromise();
+
+      if (!doc?.exists) {
+        throw new Error('Código QR inválido');
+      }
+
+      const asistencia = doc.data() as Asistencia;
+
+      if (!asistencia.activo) {
+        throw new Error('Este código QR ha expirado');
+      }
+
+      if (asistencia.asistentes?.includes(this.userId)) {
+        throw new Error('Ya registraste tu asistencia');
+      }
+
+      // Actualizar asistentes y registrar timestamp
+      await asistenciaRef.update({
+        asistentes: [...(asistencia.asistentes || []), this.userId],
+        [`registros.${this.userId}`]: new Date() // Guardamos el timestamp del registro
+      });
+
+      // El registro se actualizará automáticamente por el listener
+      await this.mostrarMensaje('Asistencia registrada con éxito', 'success');
+
+    } catch (error: any) {
+      console.error('Error al registrar asistencia:', error);
+      this.ultimosRegistros.unshift({
+        nombre: 'Error de registro',
+        fecha: new Date(),
+        estado: 'error'
+      });
+      await this.mostrarMensaje(error.message || 'Error al registrar asistencia', 'danger');
+    }
   }
 
   async iniciarEscaneoQR() {
     try {
-      console.log('Iniciando escaneo...');
-      
-      const permisos = await navigator.mediaDevices.getUserMedia({ video: true });
-      console.log('Permisos concedidos:', permisos);
-      
-      document.querySelector('body')?.classList.add('scanner-active');
+      const permisos = await this.checkPermissions();
+      if (!permisos) return;
+
       this.escanerActivo = true;
+      document.querySelector('body')?.classList.add('scanner-active');
+      await BarcodeScanner.hideBackground();
+
       const result = await BarcodeScanner.startScan();
       
       if (result.hasContent) {
-        console.log('QR Content:', result.content);
-        try {
-          const qrData = JSON.parse(result.content);
-          if (!qrData.id) {
-            throw new Error('QR inválido: falta el ID de asistencia');
-          }
-          await this.registrarAsistencia(qrData);
-        } catch (parseError) {
-          await this.registrarAsistencia({ id: result.content });
-        }
+        await this.registrarAsistencia(result.content);
       }
+
     } catch (error) {
       console.error('Error al escanear:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
-      this.mostrarMensaje(`Error al escanear: ${errorMessage}`, 'error');
+      await this.mostrarMensaje('Error al escanear el código QR', 'danger');
     } finally {
-      this.detenerEscaneoQR();
+      await this.detenerEscaneoQR();
+    }
+  }
+
+  async checkPermissions() {
+    try {
+      const status = await BarcodeScanner.checkPermission({ force: true });
+      return status.granted;
+    } catch (error) {
+      console.error('Error al verificar permisos:', error);
+      await this.mostrarMensaje('Error al verificar permisos de cámara', 'danger');
+      return false;
     }
   }
 
   async detenerEscaneoQR() {
-    BarcodeScanner.stopScan();
-    document.querySelector('body')?.classList.remove('scanner-active');
-    this.escanerActivo = false;
-  }
-
-  private async registrarAsistencia(qrData: any) {
     try {
-      const userEmail = await this.authService.getUserEmail();
-      if (!userEmail) throw new Error('Usuario no encontrado');
-
-      const asistenciaRef = this.firestore.collection('asistencias').doc(qrData.id);
-      const asistenciaDoc = await asistenciaRef.get().toPromise();
-
-      if (!asistenciaDoc?.exists) {
-        throw new Error('La asistencia no existe');
-      }
-
-      await asistenciaRef.update({
-        [`asistentes.${userEmail.replace('.', ',')}`]: {
-          estado: 'presente',
-          timestamp: new Date().toISOString()
-        }
-      });
-
-      await this.mostrarMensaje('Asistencia registrada correctamente', 'success');
-      this.router.navigate(['/home']);
+      this.escanerActivo = false;
+      await BarcodeScanner.stopScan();
+      await BarcodeScanner.showBackground();
+      document.querySelector('body')?.classList.remove('scanner-active');
     } catch (error) {
-      console.error('Error:', error);
-      this.mostrarMensaje('Error al registrar la asistencia', 'error');
+      console.error('Error al detener escáner:', error);
     }
   }
 
-  private async mostrarMensaje(mensaje: string, tipo: 'success' | 'error') {
-    const alert = await this.alertController.create({
-      header: tipo === 'success' ? 'Éxito' : 'Error',
+  async mostrarMensaje(mensaje: string, color: string = 'primary') {
+    const toast = await this.toastController.create({
       message: mensaje,
-      buttons: ['OK']
+      duration: 2000,
+      color: color,
+      position: 'top'
     });
-    await alert.present();
+    toast.present();
+  }
+
+  ngOnDestroy() {
+    this.detenerEscaneoQR();
   }
 }

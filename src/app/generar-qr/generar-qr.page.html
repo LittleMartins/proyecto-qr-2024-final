@@ -1,34 +1,64 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-back-button defaultHref="/home" text=""></ion-back-button>
     </ion-buttons>
     <ion-title>Generar QR</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
   <!-- QR en pantalla completa -->
-  <div class="qr-fullscreen" *ngIf="qrSeleccionado" (click)="cerrarQRCompleto()">
-    <h2 class="qr-title">Registrar asistencia: {{asistenciaSeleccionada?.asignatura}}</h2>
-    <img [src]="qrSeleccionado" alt="QR Code">
-    <ion-text color="light">Toca en cualquier lugar para cerrar</ion-text>
+  <div class="qr-fullscreen animate__animated animate__fadeIn" *ngIf="qrSeleccionado" (click)="cerrarQRCompleto()">
+    <h2 class="qr-title">{{asistenciaSeleccionada?.asignatura}}</h2>
+    <img [src]="qrSeleccionado" alt="QR Code" class="animate__animated animate__zoomIn">
+    <ion-text color="light" class="instrucciones">
+      <ion-icon name="close-circle-outline"></ion-icon>
+      Toca para cerrar
+    </ion-text>
   </div>
 
-  <ion-card>
+  <!-- Sección de generación de QR -->
+  <ion-card class="main-card">
     <ion-card-header>
-      <ion-card-title>Generar Código QR</ion-card-title>
+      <ion-card-title>
+        <ion-icon name="qr-code-outline" class="ion-margin-end"></ion-icon>
+        Generar Código QR
+      </ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-item>
-        <ion-label>Duración (minutos)</ion-label>
-        <ion-input type="number" [(ngModel)]="duracionSeleccionada"></ion-input>
-      </ion-item>
+      <div class="duracion-container">
+        <div class="duracion-header">
+          <ion-icon name="time-outline"></ion-icon>
+          <h3>Duración del código QR</h3>
+        </div>
+        <div class="duracion-input-container">
+          <ion-input 
+            type="number"
+            placeholder="Ingrese los minutos" 
+            [(ngModel)]="duracionSeleccionada"
+            min="1"
+            class="custom-input">
+          </ion-input>
+          <div class="duracion-suffix">
+            <span>minutos</span>
+          </div>
+        </div>
 
-      <ion-list>
-        <ion-item *ngFor="let asignatura of asignaturas">
-          <ion-label>{{asignatura}}</ion-label>
-          <ion-button slot="end" (click)="generarQR(asignatura)">
+      </div>
+
+      <ion-list class="asignaturas-list">
+        <ion-item *ngFor="let asignatura of asignaturas" lines="none" class="asignatura-item">
+          <ion-label>
+            <h3>{{asignatura}}</h3>
+          </ion-label>
+          <ion-button 
+            slot="end" 
+            (click)="generarQR(asignatura)"
+            shape="round"
+            size="default"
+            class="generar-btn">
+            <ion-icon name="qr-code" slot="start"></ion-icon>
             Generar QR
           </ion-button>
         </ion-item>
@@ -36,23 +66,40 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card>
+  <!-- Sección de QRs generados -->
+  <ion-card class="qrs-card">
     <ion-card-header>
-      <ion-card-title>QRs Generados</ion-card-title>
+      <ion-card-title>
+        <ion-icon name="list-outline" class="ion-margin-end"></ion-icon>
+        QRs Generados
+      </ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let asistencia of asistencias">
-          <ion-thumbnail slot="start" (click)="mostrarQRCompleto(asistencia)" class="qr-thumbnail">
+      <ion-list class="qrs-list">
+        <ion-item *ngFor="let asistencia of asistencias" lines="none" class="qr-item">
+          <ion-thumbnail 
+            slot="start" 
+            (click)="mostrarQRCompleto(asistencia)" 
+            class="qr-thumbnail">
             <img [src]="asistencia.codigoQR" alt="QR Code">
           </ion-thumbnail>
           <ion-label>
-            <h2>{{asistencia.asignatura}}</h2>
-            <p>Fecha: {{asistencia.fecha | date:'medium'}}</p>
-            <p>Estado: {{asistencia.activo ? 'Activo' : 'Expirado'}}</p>
+            <h2 class="asignatura-titulo">{{asistencia.asignatura}}</h2>
+            <p class="fecha">
+              <ion-icon name="calendar-outline"></ion-icon>
+              {{asistencia.fecha | date:'medium'}}
+            </p>
+            <ion-badge [color]="asistencia.activo ? 'success' : 'medium'" class="estado-badge">
+              {{asistencia.activo ? 'Activo' : 'Expirado'}}
+            </ion-badge>
           </ion-label>
-          <ion-button slot="end" color="danger" (click)="eliminarAsistencia(asistencia.id!)">
-            <ion-icon name="trash"></ion-icon>
+          <ion-button 
+            slot="end" 
+            color="danger" 
+            fill="clear"
+            (click)="eliminarAsistencia(asistencia.id!)"
+            class="eliminar-btn">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-item>
       </ion-list>

@@ -1,23 +1,20 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
 import { IonicModule } from '@ionic/angular';
-
 import { HomeAlumnosPageRoutingModule } from './home-alumnos-routing.module';
-
 import { HomeAlumnosPage } from './home-alumnos.page';
-
-import { FirebaseService } from '../services/firebase.service';
+import { provideFirebaseApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
     IonicModule,
-    HomeAlumnosPageRoutingModule
+    HomeAlumnosPageRoutingModule,
   ],
-  declarations: [HomeAlumnosPage],
-  providers: [FirebaseService]
+  providers: [
+    provideFirestore(() => getFirestore())
+  ],
+  declarations: [HomeAlumnosPage]
 })
 export class HomeAlumnosPageModule {}

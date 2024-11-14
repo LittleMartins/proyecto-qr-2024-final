@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { FirebaseService } from '../services/firebase.service';
+import { AuthService } from '../services/auth.service';
+import { LoadingController } from '@ionic/angular';
 
 interface Actividad {
   id?: string;
@@ -18,21 +20,26 @@ interface Actividad {
   selector: 'app-home-docentes',
   templateUrl: './home-docentes.page.html',
   styleUrls: ['./home-docentes.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomeDocentesPage implements OnInit {
+export class HomeDocentesPage implements OnInit, OnDestroy {
   currentDate: Date;
   actividades$: Observable<Actividad[]> = new Observable<Actividad[]>();
   nuevaActividadForm: FormGroup;
   isEditing: boolean = false; // Variable para controlar el estado de edición
   userData: any = {}; // Variable para almacenar los datos del usuario
   nombreCompleto: string = ''; // Variable para almacenar el nombre completo
+  isLoggingOut: boolean = false;
+  countdown: number = 3;
 
   constructor(
     private router: Router,
     private firestore: AngularFirestore,
     private formBuilder: FormBuilder,
     private toastController: ToastController,
-    private firebaseService: FirebaseService
+    private firebaseService: FirebaseService,
+    private authService: AuthService,
+    private loadingController: LoadingController
   ) {
     this.currentDate = new Date();
     this.nuevaActividadForm = this.formBuilder.group({
@@ -74,9 +81,21 @@ export class HomeDocentesPage implements OnInit {
     this.actividades$ = this.firestore.collection<Actividad>('actividades').valueChanges({ idField: 'id' });
   }
 
-  logout() {
-    console.log('Cerrando sesión...');
-    this.router.navigate(['/login']);
+  async logout() {
+    const loading = await this.loadingController.create({
+      message: 'Cerrando sesión...',
+      spinner: 'circular'
+    });
+    await loading.present();
+
+    try {
+      await this.authService.logout();
+      await loading.dismiss();
+      await this.router.navigate(['/home']);
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      await loading.dismiss();
+    }
   }
 
   async agregarActividad() {
@@ -104,7 +123,7 @@ export class HomeDocentesPage implements OnInit {
       this.presentToast('Actividad eliminada con éxito.');
       this.loadActividades(); // Recargar actividades
     } else {
-      this.presentToast('No se pudo eliminar la actividad. ID no válido.');
+      this.presentToast('No se pudo eliminar la actividad. ID no vlido.');
     }
   }
 
@@ -178,5 +197,58 @@ export class HomeDocentesPage implements OnInit {
     this.nuevaActividadForm.reset();
     this.isEditing = false; // Volver a modo agregar
     this.loadActividades(); // Recargar actividades
+  }
+
+  navegarA(ruta: string) {
+    switch(ruta) {
+      case 'perfil':
+        this.router.navigate(['/mi-perfil']);
+        break;
+      case 'qr':
+        this.router.navigate(['/generar-qr']);
+        break;
+      case 'asistencias':
+        this.router.navigate(['/asistencias']);
+        break;
+      case 'clases':
+        this.router.navigate(['/clases']);
+        break;
+      default:
+        console.log('Ruta no definida');
+    }
+  }
+
+  async cambiarEstado(actividad: Actividad) {
+    try {
+      const nuevoEstado = actividad.estado === 'pendiente' ? 'completada' : 'pendiente';
+      
+      // Buscar el documento por título
+      const actividadesSnapshot = await this.firestore
+        .collection<Actividad>('actividades', ref => ref.where('titulo', '==', actividad.titulo))
+        .get()
+        .toPromise();
+
+      if (!actividadesSnapshot || actividadesSnapshot.empty) {
+        throw new Error('No se encontró la actividad');
+      }
+
+      // Actualizar el estado
+      const actividadRef = actividadesSnapshot.docs[0].ref;
+      await actividadRef.update({ estado: nuevoEstado });
+
+      await this.presentToast(`Estado cambiado a: ${nuevoEstado}`);
+      this.loadActividades(); // Recargar actividades
+    } catch (error: any) {
+      console.error('Error al cambiar el estado:', error);
+      await this.presentToast('Error al cambiar el estado: ' + error.message);
+    }
+  }
+
+  trackByFn(index: number, item: any): number {
+    return item.id;
+  }
+
+  ngOnDestroy() {
+    // Asegúrate de desuscribir todos los observables
   }
 }

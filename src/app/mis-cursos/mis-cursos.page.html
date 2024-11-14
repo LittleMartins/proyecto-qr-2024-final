@@ -30,12 +30,7 @@
     </ion-card>
 
     <ion-toolbar>
-      <ion-button expand="block" 
-                  (click)="irARegistrarAsistencia()" 
-                  class="registro-button">
-        <ion-icon name="qr-code-outline" slot="start"></ion-icon>
-        Registrar Asistencia con QR
-      </ion-button>
+     
     </ion-toolbar>
     <!-- Cursos -->
     <div class="courses-grid">
@@ -56,8 +51,13 @@
               <span>08:30 - 10:50</span>
             </div>
             <div class="attendance-bar">
-              <div class="progress" style="width: 90%"></div>
-              <span>90% Asistencia</span>
+              <div class="progress" 
+                   [style.width]="calcularPorcentajePorCurso('apps') + '%'">
+              </div>
+              <span>
+                {{ asistenciasPorCurso['apps'] || 0 }}/{{ totalClasesPorCurso['apps'] || 0 }} 
+                ({{ calcularPorcentajePorCurso('apps') }}% Asistencia)
+              </span>
             </div>
           </div>
         </ion-card-content>
@@ -80,8 +80,13 @@
               <span>11:00 - 13:20</span>
             </div>
             <div class="attendance-bar">
-              <div class="progress" style="width: 85%"></div>
-              <span>85% Asistencia</span>
+              <div class="progress" 
+                   [style.width]="calcularPorcentajePorCurso('arquitectura') + '%'">
+              </div>
+              <span>
+                {{ asistenciasPorCurso['arquitectura'] || 0 }}/{{ totalClasesPorCurso['arquitectura'] || 0 }} 
+                ({{ calcularPorcentajePorCurso('arquitectura') }}% Asistencia)
+              </span>
             </div>
           </div>
         </ion-card-content>
@@ -104,8 +109,13 @@
               <span>14:00 - 16:20</span>
             </div>
             <div class="attendance-bar">
-              <div class="progress" style="width: 75%"></div>
-              <span>75% Asistencia</span>
+              <div class="progress" 
+                   [style.width]="calcularPorcentajePorCurso('estadistica') + '%'">
+              </div>
+              <span>
+                {{ asistenciasPorCurso['estadistica'] || 0 }}/{{ totalClasesPorCurso['estadistica'] || 0 }} 
+                ({{ calcularPorcentajePorCurso('estadistica') }}% Asistencia)
+              </span>
             </div>
           </div>
         </ion-card-content>
@@ -128,8 +138,13 @@
               <span>16:30 - 18:50</span>
             </div>
             <div class="attendance-bar">
-              <div class="progress" style="width: 80%"></div>
-              <span>80% Asistencia</span>
+              <div class="progress" 
+                   [style.width]="calcularPorcentajePorCurso('calidad') + '%'">
+              </div>
+              <span>
+                {{ asistenciasPorCurso['calidad'] || 0 }}/{{ totalClasesPorCurso['calidad'] || 0 }} 
+                ({{ calcularPorcentajePorCurso('calidad') }}% Asistencia)
+              </span>
             </div>
           </div>
         </ion-card-content>

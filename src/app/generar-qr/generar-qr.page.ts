@@ -7,9 +7,10 @@ interface Asistencia {
   id?: string;
   asignatura: string;
   fecha: Date;
-  codigoQR: string;
+  codigoQR?: string;
   duracion: number;
   activo: boolean;
+  asistentes: string[];
 }
 
 @Component({
@@ -26,7 +27,7 @@ export class GenerarQRPage implements OnInit {
   ];
   
   asistencias: Asistencia[] = [];
-  duracionSeleccionada: number = 5; // duración en minutos
+  duracionSeleccionada: number = 120; // duración en minutos
   qrSeleccionado: string | null = null;
   asistenciaSeleccionada: Asistencia | null = null;
   
@@ -37,26 +38,36 @@ export class GenerarQRPage implements OnInit {
   }
 
   async generarQR(asignatura: string) {
-    const timestamp = new Date().getTime();
-    const codigoUnico = `${asignatura}-${timestamp}`;
-    
     try {
-      const qrCode = await QRCode.toDataURL(codigoUnico);
-      
-      const nuevaAsistencia: Asistencia = {
+      // Primero crear el documento en Firestore
+      const nuevaAsistencia: Omit<Asistencia, 'codigoQR'> = {
         asignatura: asignatura,
         fecha: new Date(),
-        codigoQR: qrCode,
         duracion: this.duracionSeleccionada,
-        activo: true
+        activo: true,
+        asistentes: [] // Agregamos el array de asistentes
       };
 
-      // Guardar en Firestore
-      await this.firestore.collection('asistencias').add(nuevaAsistencia);
+      // Guardar en Firestore y obtener el ID del documento
+      const docRef = await this.firestore.collection('asistencias').add(nuevaAsistencia);
+      const docId = docRef.id;
+
+      // Generar QR con el ID del documento
+      const qrCode = await QRCode.toDataURL(docId, {
+        width: 400,
+        margin: 2,
+        scale: 4,
+        errorCorrectionLevel: 'H'
+      });
+      
+      // Actualizar el documento con el código QR
+      await docRef.update({
+        codigoQR: qrCode
+      });
       
       // Iniciar temporizador
       setTimeout(() => {
-        this.desactivarQR(codigoUnico);
+        this.desactivarQR(docId);
       }, this.duracionSeleccionada * 60 * 1000);
 
       this.cargarAsistencias();
@@ -65,13 +76,14 @@ export class GenerarQRPage implements OnInit {
     }
   }
 
-  async desactivarQR(codigoQR: string) {
-    const querySnapshot = await this.firestore.collection('asistencias')
-      .ref.where('codigoQR', '==', codigoQR).get();
-    
-    querySnapshot.forEach((doc) => {
-      doc.ref.update({ activo: false });
-    });
+  async desactivarQR(docId: string) {
+    try {
+      await this.firestore.collection('asistencias').doc(docId).update({ 
+        activo: false 
+      });
+    } catch (error) {
+      console.error('Error al desactivar QR:', error);
+    }
   }
 
   async eliminarAsistencia(id: string) {
@@ -92,7 +104,7 @@ export class GenerarQRPage implements OnInit {
   }
 
   mostrarQRCompleto(asistencia: Asistencia) {
-    this.qrSeleccionado = asistencia.codigoQR;
+    this.qrSeleccionado = asistencia.codigoQR || null;
     this.asistenciaSeleccionada = asistencia;
   }
 

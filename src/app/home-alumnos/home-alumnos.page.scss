@@ -1,54 +1,171 @@
 /* home-alumnos.page.scss */
+:root {
+  --ion-color-primary: #4f46e5;
+  --ion-color-primary-rgb: 79, 70, 229;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #463eca;
+  --ion-color-primary-tint: #615ee8;
+}
+
 ion-content {
-  --background: #f5f5f5;
+  --background: #f8f9fa;
 }
 
 .welcome-card {
-  padding: 20px;
-  background: var(--ion-color-primary);
-  color: white;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  
-  h1 {
-    margin: 0;
-    font-size: 24px;
-    font-weight: bold;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed, #6366f1);
+  margin: 20px 16px;
+  border-radius: 24px;
+  box-shadow: 0 12px 24px rgba(79, 70, 229, 0.25);
+  overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+    border-radius: 50%;
+    transform: translate(50%, -50%);
   }
-  
-  p {
-    margin: 10px 0 0;
-    opacity: 0.9;
+
+  ion-card-content {
+    padding: 24px;
+  }
+
+  .welcome-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    .welcome-text {
+      flex: 1;
+    }
+
+    .avatar-container {
+      ion-avatar {
+        width: 60px;
+        height: 60px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+
+  .welcome-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .welcome-subtitle {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+  }
+
+  .stats-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 24px 0;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px;
+
+      ion-icon {
+        font-size: 24px;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .stat-info {
+        display: flex;
+        flex-direction: column;
+
+        .stat-value {
+          font-size: 20px;
+          font-weight: 700;
+          color: white;
+        }
+
+        .stat-label {
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.7);
+        }
+      }
+    }
+  }
+
+  .attendance-summary {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    ion-chip {
+      --background: rgba(255, 255, 255, 0.15);
+      --color: white;
+      padding: 8px 16px;
+      height: auto;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      
+      ion-icon {
+        margin-right: 8px;
+        font-size: 18px;
+      }
+
+      &:hover {
+        --background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+        transition: all 0.3s ease;
+      }
+    }
   }
 }
 
 .menu-card {
-  margin: 0;
-  height: 100%;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
-
-  &:active {
-    transform: scale(0.98);
-  }
-
+  margin: 8px;
+  height: 160px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  
   ion-card-content {
-    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 24px;
   }
 
   .card-icon {
-    font-size: 40px;
+    font-size: 42px;
+    margin-bottom: 16px;
     color: var(--ion-color-primary);
+    transition: all 0.4s ease;
+  }
+
+  .menu-title {
+    font-size: 16px;
+    font-weight: 600;
     margin-bottom: 8px;
   }
 
-  h2 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--ion-color-dark);
+  &:active {
+    transform: scale(0.98);
   }
 }
 
@@ -99,10 +216,11 @@ ion-content {
 }
 
 .logout-button {
-  font-size: 16px;
-  
+  --padding-start: 12px;
+  --padding-end: 12px;
+
   ion-icon {
-    margin-right: 8px;
+    margin-right: 5px;
   }
 }
 
@@ -140,4 +258,329 @@ ion-content {
       }
     }
   }
+}
+
+// Animaciones
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+ion-card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+// Barra de búsqueda
+ion-searchbar {
+  --box-shadow: none;
+  --background: white;
+  --border-radius: 12px;
+  padding: 0 8px;
+  margin-bottom: 16px;
+}
+
+// Segmentos
+ion-segment {
+  background: rgba(255, 255, 255, 0.95);
+  margin: 20px 16px;
+  border-radius: 16px;
+  padding: 6px;
+  
+  ion-segment-button {
+    --background-checked: var(--ion-color-primary);
+    --color-checked: white;
+    --border-radius: 12px;
+    min-height: 44px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}
+
+// Tarjeta de actividades
+.activities-card {
+  margin: 20px 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.98);
+  
+  ion-card-header {
+    padding: 16px;
+    
+    ion-card-title {
+      display: flex;
+      align-items: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+      
+      ion-icon {
+        margin-right: 8px;
+        font-size: 1.4rem;
+        color: var(--ion-color-primary);
+      }
+    }
+  }
+  
+  ion-item {
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    --background: transparent;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 4px;
+      height: 70%;
+      background: var(--ion-color-primary);
+      border-radius: 0 4px 4px 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    &:hover::before {
+      opacity: 1;
+    }
+  }
+}
+
+// Animación para el cambio de estado
+@keyframes checkmark {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+ion-button.estado-button {
+  ion-icon {
+    animation: checkmark 0.3s ease-out;
+  }
+}
+
+// FAB
+ion-fab {
+  ion-fab-button {
+    --background: #4f46e5;
+    --background-activated: #4338ca;
+    --box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  }
+
+  ion-fab-list button {
+    --background: white;
+    --background-activated: #f3f4f6;
+    
+    ion-icon {
+      color: #4f46e5;
+    }
+  }
+}
+
+// Anuncios
+.announcements-card {
+  border-radius: 16px;
+  background: white;
+  margin: 16px 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+  ion-card-header {
+    padding: 16px;
+
+    ion-card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      ion-icon {
+        color: #4f46e5;
+      }
+    }
+  }
+
+  ion-item {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --background: transparent;
+
+    h3 {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+
+    p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    small {
+      color: #9ca3af;
+      font-size: 12px;
+    }
+  }
+}
+
+// Animaciones
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+ion-card {
+  animation: slideIn 0.4s ease-out forwards;
+}
+
+// Modo oscuro
+@media (prefers-color-scheme: dark) {
+  ion-content {
+    --background: #111827;
+  }
+
+  .menu-card, .activities-card, .announcements-card {
+    background: #1f2937;
+
+    .menu-title, .activity-title {
+      color: #f3f4f6;
+    }
+
+    .menu-subtitle, .activity-description {
+      color: #9ca3af;
+    }
+  }
+
+  ion-searchbar {
+    --background: #1f2937;
+    --color: white;
+  }
+
+  ion-segment {
+    background: #1f2937;
+  }
+}
+
+ion-searchbar {
+  padding: 0 16px;
+  --box-shadow: none;
+  --background: #f8f9fa;
+  --border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+ion-segment {
+  padding: 0 16px;
+  margin-bottom: 16px;
+  
+  ion-segment-button {
+    --background-checked: var(--ion-color-primary);
+    --color-checked: white;
+    --indicator-color: transparent;
+    min-height: 40px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    
+    &::part(indicator) {
+      display: none;
+    }
+  }
+}
+
+// Estilos específicos para la tarjeta de QR
+.qr-card {
+  .qr-icon-container {
+    position: relative;
+    height: 50px;
+    width: 50px;
+    margin: 0 auto 16px;
+    
+    .card-icon {
+      font-size: 48px;
+      color: var(--ion-color-primary);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .scan-icon {
+      position: absolute;
+      font-size: 24px;
+      color: #4CAF50;
+      bottom: -8px;
+      right: -8px;
+      background: white;
+      border-radius: 50%;
+      padding: 2px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  }
+
+  &:active {
+    .qr-icon-container {
+      transform: scale(0.95);
+    }
+  }
+}
+
+// Animación para el ícono de escaneo
+@keyframes scan {
+  0% {
+    opacity: 0.5;
+    transform: translateY(2px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+  100% {
+    opacity: 0.5;
+    transform: translateY(2px);
+  }
+}
+
+.scan-icon {
+  animation: scan 2s ease-in-out infinite;
+}
+
+// Animación de entrada
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.welcome-card {
+  animation: cardEntrance 0.6s ease-out forwards;
 }
