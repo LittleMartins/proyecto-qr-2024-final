@@ -8,6 +8,19 @@
   --border-radius: 12px;
 }
 
+// Modo oscuro
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: #1E88E5;
+    --secondary-color: #B0BEC5;
+    --background-color: #121212;
+    --input-background: #1E1E1E;
+    --text-color: #FFFFFF;
+    --error-color: #EF5350;
+    --success-color: #4CAF50;
+  }
+}
+
 ion-header {
   position: absolute;
   
@@ -35,6 +48,11 @@ ion-header {
 
 ion-content {
   --background: linear-gradient(135deg, #004AAD 0%, #0063CE 50%, #0077E6 100%);
+  
+  @media (prefers-color-scheme: dark) {
+    --background: linear-gradient(135deg, #1A237E 0%, #0D47A1 50%, #1565C0 100%);
+  }
+  
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -55,6 +73,10 @@ ion-content {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px);
   animation: slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+
+  @media (prefers-color-scheme: dark) {
+    background: rgba(30, 30, 30, 0.95);
+  }
 }
 
 .logo-container {
@@ -80,6 +102,10 @@ ion-content {
     font-size: 1rem;
     margin: 0.5rem 0;
     opacity: 0.8;
+
+    @media (prefers-color-scheme: dark) {
+      color: var(--text-color);
+    }
   }
 }
 
@@ -107,11 +133,19 @@ ion-content {
       font-weight: 500;
       font-size: 0.95rem;
       color: var(--secondary-color);
+
+      @media (prefers-color-scheme: dark) {
+        color: var(--text-color);
+      }
     }
 
     ion-input {
       --padding-start: 8px;
       font-size: 1rem;
+      
+      @media (prefers-color-scheme: dark) {
+        --color: var(--text-color);
+      }
     }
 
     .password-toggle-btn {
@@ -141,6 +175,10 @@ ion-content {
   --color: white;
   overflow: hidden;
   transition: all 0.3s ease;
+  
+  @media (prefers-color-scheme: dark) {
+    --background: linear-gradient(45deg, #1E88E5, #2196F3);
+  }
   
   .button-inner {
     display: flex;
@@ -201,6 +239,10 @@ ion-content {
   display: flex;
   align-items: center;
   animation: fadeIn 0.3s ease;
+
+  @media (prefers-color-scheme: dark) {
+    background: rgba(239, 83, 80, 0.2);
+  }
 
   ion-icon {
     margin-right: 8px;
@@ -263,5 +305,4 @@ ion-content {
 }
 
 
- 
  
