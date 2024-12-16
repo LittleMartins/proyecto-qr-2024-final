@@ -220,40 +220,82 @@ ion-list {
 // Modo oscuro mejorado
 @media (prefers-color-scheme: dark) {
   ion-content {
-    --background: var(--ion-color-dark);
+    --background: #121212;
   }
 
   .menu-card {
-    background: var(--ion-color-dark-tint);
+    background: #1e1e1e;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
     
     ion-card-content {
       .card-icon {
-        color: var(--ion-color-primary-shade);
+        color: var(--ion-color-primary-tint);
       }
       
       h2 {
-        color: var(--ion-color-light);
+        color: #e0e0e0;
       }
+    }
+
+    &:hover {
+      background: #252525;
     }
   }
 
   .info-card {
-    background: var(--ion-color-dark-tint);
+    background: #1e1e1e;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
 
-    form ion-item {
-      --background: var(--ion-color-dark-shade);
+    .card-header {
+      background: var(--ion-color-primary-shade);
     }
 
-    ion-list ion-item {
-      --background: var(--ion-color-dark-shade);
+    form {
+      background: #1e1e1e;
       
-      ion-label {
-        h2 {
-          color: var(--ion-color-light);
+      ion-item {
+        --background: #252525;
+        
+        ion-label {
+          color: #e0e0e0;
         }
-        p {
-          color: var(--ion-color-light-shade);
+        
+        ion-input, ion-textarea, ion-select {
+          --background: #252525;
+          border-color: #333333;
+          color: #ffffff;
+          
+          &.has-focus {
+            --background: #2c2c2c;
+            border-color: var(--ion-color-primary);
+          }
         }
+      }
+    }
+  }
+
+  .welcome-card {
+    background: var(--ion-color-primary-shade);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  }
+
+  ion-list ion-item {
+    --background: #1e1e1e;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    
+    &:hover {
+      --background: #252525;
+    }
+  }
+
+  .estado-container {
+    ion-chip {
+      &.pendiente {
+        --background: rgba(var(--ion-color-warning-rgb), 0.2);
+      }
+      
+      &.completada {
+        --background: rgba(var(--ion-color-success-rgb), 0.2);
       }
     }
   }
@@ -371,4 +413,191 @@ ion-list {
   -moz-osx-font-smoothing: grayscale;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
+}
+
+// Nuevo estilo para la lista de actividades
+.actividades-list {
+  padding: 8px;
+  background: transparent;
+
+  ion-item-sliding {
+    margin-bottom: 12px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .actividad-item {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    --background: var(--ion-background-color);
+    --border-radius: 16px;
+    
+    .actividad-content {
+      width: 100%;
+    }
+
+    .actividad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      
+      h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--ion-text-color);
+        flex: 1;
+        margin-right: 12px;
+      }
+
+      ion-chip {
+        margin: 0;
+        height: 24px;
+        padding: 0 10px;
+        
+        &.pendiente {
+          --background: rgba(var(--ion-color-warning-rgb), 0.15);
+          --color: var(--ion-color-warning-shade);
+        }
+        
+        &.completada {
+          --background: rgba(var(--ion-color-success-rgb), 0.15);
+          --color: var(--ion-color-success-shade);
+        }
+        
+        ion-icon {
+          font-size: 14px;
+          margin-right: 4px;
+        }
+        
+        ion-label {
+          font-size: 0.8rem;
+        }
+      }
+    }
+
+    .descripcion {
+      font-size: 0.9rem;
+      color: var(--ion-color-medium);
+      margin: 0 0 12px 0;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .actividad-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      .fecha-container {
+        display: flex;
+        align-items: center;
+        color: var(--ion-color-medium);
+        font-size: 0.85rem;
+        
+        ion-icon {
+          margin-right: 4px;
+          font-size: 16px;
+        }
+      }
+
+      .actions-container {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        
+        ion-button {
+          height: 35px;
+          width: 35px;
+          --padding-start: 0;
+          --padding-end: 0;
+          margin: 0;
+          
+          .action-icon {
+            font-size: 18px;
+          }
+
+          &[color="danger"] {
+            --color: var(--ion-color-danger);
+            
+            &:hover {
+              --color: var(--ion-color-danger-shade);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  ion-item-options {
+    ion-item-option {
+      --padding-start: 16px;
+      --padding-end: 16px;
+      font-size: 14px;
+      
+      ion-icon {
+        font-size: 20px;
+        margin-right: 4px;
+      }
+      
+      &[color="warning"] {
+        --ion-color-base: var(--ion-color-warning);
+        --ion-color-contrast: var(--ion-color-warning-contrast);
+      }
+      
+      &[color="danger"] {
+        --ion-color-base: var(--ion-color-danger);
+        --ion-color-contrast: var(--ion-color-danger-contrast);
+      }
+    }
+  }
+}
+
+// Animaciones para los botones de acción
+.actions-container ion-button {
+  transition: transform 0.2s ease;
+  
+  &:active {
+    transform: scale(0.9);
+  }
+  
+  .action-icon {
+    transition: all 0.2s ease;
+  }
+  
+  &:hover .action-icon {
+    transform: scale(1.1);
+  }
+}
+
+// Mejoras para modo oscuro
+@media (prefers-color-scheme: dark) {
+  .actividades-list {
+    ion-item-sliding {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .actividad-item {
+      --background: var(--ion-card-background);
+      
+      .descripcion {
+        color: var(--ion-color-medium-shade);
+      }
+      
+      .fecha-container {
+        color: var(--ion-color-medium-shade);
+      }
+    }
+  }
 }

@@ -1,0 +1,142 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home-docentes"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalles de Actividad</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Tarjeta de información de actividad -->
+  <ion-card *ngIf="actividadInfo" class="actividad-card animate__animated animate__fadeIn">
+    <ion-card-header>
+      <ion-chip color="primary" outline>Actividad</ion-chip>
+      <ion-card-title>{{ actividadInfo.titulo }}</ion-card-title>
+      <ion-card-subtitle>{{ actividadInfo.descripcion }}</ion-card-subtitle>
+    </ion-card-header>
+    
+    <ion-card-content>
+      <ion-item lines="none">
+        <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
+        <ion-label>
+          <p>Fecha límite</p>
+          <h3>{{ actividadInfo.fecha?.toDate ? actividadInfo.fecha.toDate() : actividadInfo.fecha | date:'dd/MM/yyyy' }}</h3>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Tarjetas de estadísticas -->
+  <ion-grid class="stats-grid">
+    <ion-row>
+      <ion-col size="4">
+        <ion-card class="stat-card">
+          <ion-card-content>
+            <ion-text color="primary">
+              <h2>{{ totalRegistros }}</h2>
+            </ion-text>
+            <p>Total</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      
+      <ion-col size="4">
+        <ion-card class="stat-card">
+          <ion-card-content>
+            <ion-text color="success">
+              <h2>{{ completados }}</h2>
+            </ion-text>
+            <p>Completados</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      
+      <ion-col size="4">
+        <ion-card class="stat-card">
+          <ion-card-content>
+            <ion-text color="warning">
+              <h2>{{ pendientes }}</h2>
+            </ion-text>
+            <p>Pendientes</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Lista de registros -->
+  <div class="registros-section">
+    <h2 class="section-title">
+      <ion-icon name="people-outline"></ion-icon>
+      Registros de Estudiantes
+    </h2>
+
+    <ion-list>
+      <ion-item *ngFor="let registro of registros; let i = index" 
+                class="registro-item animate__animated animate__fadeInUp"
+                [style.--animation-delay]="i * 0.1 + 's'">
+        
+        <!-- Debug info -->
+        <div style="display: none;">
+          {{ registro | json }}
+        </div>
+
+        <ion-avatar slot="start">
+          <img 
+            [src]="getProfileImageSrc(registro.userData?.profileImage)"
+            (error)="handleImageError($event)"
+            alt="Perfil de {{registro.userData?.nombre}}"
+          >
+        </ion-avatar>
+        
+        <ion-label>
+          <!-- Nombre completo -->
+          <h2>
+            {{ registro.userData?.nombre }} {{ registro.userData?.apellido }}
+            <small *ngIf="!registro.userData?.nombre && !registro.userData?.apellido">
+              ({{ registro.nombreUsuario }})
+            </small>
+          </h2>
+
+          <!-- Información de contacto -->
+          <p class="user-info" *ngIf="registro.userData?.phone">
+            <ion-icon name="call-outline"></ion-icon>
+            {{ registro.userData?.phone }}
+          </p>
+          <p class="user-info" *ngIf="registro.userData?.email">
+            <ion-icon name="mail-outline"></ion-icon>
+            {{ registro.userData?.email }}
+          </p>
+
+          <!-- Estado y fecha -->
+          <ion-text [color]="registro.estado === 'completada' ? 'success' : 'warning'">
+            <p>
+              <ion-icon [name]="registro.estado === 'completada' ? 'checkmark-circle' : 'time'"></ion-icon>
+              {{ registro.estado | titlecase }}
+            </p>
+          </ion-text>
+          <ion-text color="medium">
+            <small>
+              <ion-icon name="calendar-outline"></ion-icon>
+              {{ registro.fecha | date:'dd/MM/yyyy HH:mm' }}
+            </small>
+          </ion-text>
+        </ion-label>
+
+        <ion-badge [color]="registro.estado === 'completada' ? 'success' : 'warning'" slot="end">
+          {{ registro.estado === 'completada' ? 'Completado' : 'Pendiente' }}
+        </ion-badge>
+      </ion-item>
+
+      <!-- Mensaje cuando no hay registros -->
+      <ion-item *ngIf="registros.length === 0" class="empty-state">
+        <ion-label class="ion-text-center">
+          <ion-icon name="document-text-outline" size="large"></ion-icon>
+          <h2>No hay registros disponibles</h2>
+          <p>Aún no hay estudiantes registrados en esta actividad</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>

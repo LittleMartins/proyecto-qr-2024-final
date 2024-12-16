@@ -4,6 +4,7 @@ import { Platform, ToastController } from '@ionic/angular';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from 'firebase/firestore';
 import { AuthService } from '../services/auth.service';
+import { map } from 'rxjs/operators';
 
 interface Asistencia {
   asignatura: string;
@@ -62,22 +63,33 @@ export class RegistrarAsistenciaPage {
     this.firestore
       .collection('asistencias', ref => 
         ref.where('asistentes', 'array-contains', this.userId)
-           .orderBy('fecha', 'desc')
            .limit(5)
       )
       .snapshotChanges()
-      .subscribe(docs => {
-        this.ultimosRegistros = docs.map(doc => {
-          const data = doc.payload.doc.data() as Asistencia;
-          return {
-            nombre: data.asignatura,
-            fecha: data.fecha instanceof Date ? data.fecha : (data.fecha as Timestamp).toDate(),
-            estado: 'success'
-          };
-        });
-      }, error => {
-        console.error('Error al cargar registros:', error);
-      });
+      .pipe(
+        map(docs => {
+          return docs
+            .map(doc => {
+              const data = doc.payload.doc.data() as Asistencia;
+              return {
+                nombre: data.asignatura,
+                fecha: data.fecha instanceof Date ? data.fecha : (data.fecha as Timestamp).toDate(),
+                estado: 'success' as const
+              };
+            })
+            .sort((a, b) => b.fecha.getTime() - a.fecha.getTime())
+            .slice(0, 5);
+        })
+      )
+      .subscribe(
+        registros => {
+          this.ultimosRegistros = registros;
+        },
+        error => {
+          console.error('Error al cargar registros:', error);
+          this.mostrarMensaje('Error al cargar los registros. Por favor, intenta más tarde.', 'danger');
+        }
+      );
   }
 
   async registrarAsistencia(asistenciaId: string) {
@@ -171,7 +183,7 @@ export class RegistrarAsistenciaPage {
   async mostrarMensaje(mensaje: string, color: string = 'primary') {
     const toast = await this.toastController.create({
       message: mensaje,
-      duration: 2000,
+      duration: 3000,
       color: color,
       position: 'top'
     });

@@ -283,25 +283,98 @@ ion-item-sliding {
 // Modo oscuro
 @media (prefers-color-scheme: dark) {
   ion-content {
-    --background: var(--ion-color-dark);
+    --background: #121212;
+    
+    ion-segment {
+      background: #1e1e1e;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
     
     ion-card {
-      background: var(--ion-color-dark-tint);
+      background: #1e1e1e;
       box-shadow: 0 4px 16px rgba(0,0,0,0.2);
       
       ion-card-title {
-        color: var(--ion-color-light);
+        color: #e0e0e0;
       }
     }
     
     ion-item {
       ion-label {
-        color: var(--ion-color-light);
+        color: #e0e0e0;
       }
       
       ion-input {
-        --background: var(--ion-color-dark-shade);
+        --background: #252525;
+        --color: #ffffff;
+        --placeholder-color: #8e8e8e;
       }
+    }
+
+    .duracion-container {
+      background: #1e1e1e;
+      border-color: rgba(255, 255, 255, 0.05);
+
+      &:hover {
+        background: #252525;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .duracion-header h3 {
+        color: #e0e0e0;
+      }
+
+      .duracion-input-container {
+        background: #252525;
+        border-color: rgba(99, 102, 241, 0.2);
+
+        .custom-input {
+          color: #e0e0e0;
+          --placeholder-color: #8e8e8e;
+        }
+
+        .duracion-suffix {
+          background: #1e1e1e;
+          color: #a0a0a0;
+          border-left-color: rgba(255, 255, 255, 0.1);
+        }
+      }
+
+      .duracion-presets button {
+        background: #252525;
+        color: #e0e0e0;
+        border-color: rgba(255, 255, 255, 0.1);
+
+        &:hover:not(.active) {
+          background: #303030;
+        }
+      }
+    }
+
+    .qr-container img {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .lista-asistencias ion-item {
+      --background: #1e1e1e;
+      
+      ion-label {
+        h2 {
+          color: #e0e0e0;
+        }
+        
+        p {
+          color: #a0a0a0;
+        }
+      }
+    }
+  }
+
+  .qr-fullscreen {
+    background-color: rgba(0, 0, 0, 0.95);
+    
+    ion-text {
+      color: #e0e0e0;
     }
   }
 }

@@ -109,33 +109,52 @@
       </div>
     </form>
 
-    <ion-list>
-      <ion-item *ngFor="let actividad of actividades$ | async; trackBy: trackByFn">
-        <ion-label>
-          <h2>{{ actividad.titulo }}</h2>
-          <p>{{ actividad.descripcion }}</p>
-          <p class="fecha">{{ actividad.fecha | date: 'fullDate' }}</p>
-          <div class="estado-container">
-            <ion-chip [class]="actividad.estado" (click)="cambiarEstado(actividad)">
-              <ion-icon [name]="actividad.estado === 'completada' ? 'checkmark-circle' : 'time'"></ion-icon>
-              <ion-label>{{ actividad.estado | titlecase }}</ion-label>
-            </ion-chip>
+    <ion-list class="actividades-list">
+      <ion-item-sliding *ngFor="let actividad of actividades$ | async; trackBy: trackByFn">
+        <ion-item class="actividad-item">
+          <div class="actividad-content">
+            <div class="actividad-header">
+              <h2>{{ actividad.titulo }}</h2>
+              <ion-chip [class]="actividad.estado">
+                <ion-icon [name]="actividad.estado === 'completada' ? 'checkmark-circle' : 'time'"></ion-icon>
+                <ion-label>{{ actividad.estado | titlecase }}</ion-label>
+              </ion-chip>
+            </div>
+            
+            <p class="descripcion">{{ actividad.descripcion }}</p>
+            
+            <div class="actividad-footer">
+              <div class="fecha-container">
+                <ion-icon name="calendar-outline"></ion-icon>
+                <span>{{ actividad.fecha | date: 'dd MMM, yyyy' }}</span>
+              </div>
+              
+              <div class="actions-container">
+                <ion-button fill="clear" size="small" (click)="actualizarActividad(actividad)">
+                  <ion-icon name="create-outline" class="action-icon"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" size="small" [routerLink]="['/registros-home']" [queryParams]="{actividadId: actividad.id}">
+                  <ion-icon name="list-outline" class="action-icon"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" size="small" color="danger" (click)="eliminarActividad(actividad)">
+                  <ion-icon name="trash-outline" class="action-icon"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
           </div>
-        </ion-label>
+        </ion-item>
         
-        <div class="item-buttons" slot="end">
-          <ion-button 
-            class="update-button" 
-            (click)="actualizarActividad(actividad)">
-            <ion-icon name="create-outline"></ion-icon>
-          </ion-button>
-          <ion-button 
-            class="delete-button" 
-            (click)="eliminarActividad(actividad)">
-            <ion-icon name="trash-outline"></ion-icon>
-          </ion-button>
-        </div>
-      </ion-item>
+        <ion-item-options side="end">
+          <ion-item-option color="warning" (click)="actualizarActividad(actividad)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+            Editar
+          </ion-item-option>
+          <ion-item-option color="danger" (click)="eliminarActividad(actividad)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            Eliminar
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
     </ion-list>
   </ion-card>
 </ion-content>

@@ -8,6 +8,8 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ToastController } from '@ionic/angular';
+import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 interface Actividad {
   id?: string;
@@ -15,6 +17,13 @@ interface Actividad {
   descripcion: string;
   fecha: any;
   estado: 'pendiente' | 'completada';
+  registros?: {
+    [userId: string]: {
+      nombreUsuario: string;
+      fecha: Date;
+      estado: 'completada' | 'pendiente';
+    }
+  };
 }
 
 interface Anuncio {
@@ -29,6 +38,19 @@ interface Notificacion {
   fecha: Date;
   icono: string;
   color: string;
+}
+
+interface RegistroCompletado {
+  usuarioId: string;
+  nombreUsuario: string;
+  fecha: Date;
+  estado: 'completada' | 'pendiente';
+}
+
+interface UserData {
+  nombre: string;
+  apellido: string;
+  email: string;
 }
 
 @Component({
@@ -76,6 +98,7 @@ export class HomeAlumnosPage implements OnInit {
       color: 'success'
     }
   ];
+  userId: string | null = null;
 
   constructor(
     private router: Router,
@@ -84,7 +107,8 @@ export class HomeAlumnosPage implements OnInit {
     private navController: NavController,
     private loadingController: LoadingController,
     private firestore: AngularFirestore,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private auth: AngularFireAuth
   ) {
     this.actividades$ = this.firestore.collection<Actividad>('actividades', ref => 
       ref.orderBy('fecha', 'asc')
@@ -92,6 +116,14 @@ export class HomeAlumnosPage implements OnInit {
     
     this.actividadesFiltradas$ = this.actividades$;
     this.cargarPorcentajeAsistencia();
+    this.authService.getCurrentUser().then(user => {
+      if (user) {
+        this.userId = user.uid;
+      }
+    });
+    this.auth.user.subscribe(user => {
+      this.userId = user ? user.uid : null;
+    });
   }
 
   ngOnInit() {
@@ -177,37 +209,51 @@ export class HomeAlumnosPage implements OnInit {
     }
   }
 
-  async cambiarEstado(actividad: Actividad) {
+  getEstadoActividad(actividad: any): string {
+    if (!this.userId || !actividad.registros || !actividad.registros[this.userId]) {
+      return 'pendiente';
+    }
+    return actividad.registros[this.userId].estado || 'pendiente';
+  }
+
+  async cambiarEstado(actividad: any) {
+    if (!this.userId) {
+      console.error('No hay usuario autenticado');
+      return;
+    }
+
     try {
-      const nuevoEstado = actividad.estado === 'pendiente' ? 'completada' : 'pendiente';
+      const nuevoEstado = this.getEstadoActividad(actividad) === 'completada' ? 'pendiente' : 'completada';
       
-      // Buscar el documento por título
-      const actividadesSnapshot = await this.firestore
-        .collection<Actividad>('actividades', ref => ref.where('titulo', '==', actividad.titulo))
-        .get()
-        .toPromise();
+      // Crear objeto de actualización
+      const actualizacion = {
+        registros: {
+          [this.userId]: {
+            estado: nuevoEstado,
+            fecha: new Date()
+          }
+        }
+      };
 
-      if (!actividadesSnapshot || actividadesSnapshot.empty) {
-        throw new Error('No se encontró la actividad');
-      }
-
-      // Actualizar el estado
-      const actividadRef = actividadesSnapshot.docs[0].ref;
-      await actividadRef.update({ estado: nuevoEstado });
+      // Actualizar en Firestore
+      await this.firestore
+        .collection('actividades')
+        .doc(actividad.id)
+        .set(actualizacion, { merge: true });
 
       // Mostrar mensaje de éxito
       const toast = await this.toastController.create({
         message: `Actividad marcada como ${nuevoEstado}`,
         duration: 2000,
         position: 'bottom',
-        color: 'success'
+        color: nuevoEstado === 'completada' ? 'success' : 'warning'
       });
       toast.present();
-      
-    } catch (error: any) {
-      console.error('Error al cambiar el estado:', error);
+
+    } catch (error) {
+      console.error('Error al cambiar estado:', error);
       const toast = await this.toastController.create({
-        message: 'Error al cambiar el estado de la actividad',
+        message: 'Error al actualizar el estado',
         duration: 2000,
         position: 'bottom',
         color: 'danger'
@@ -220,19 +266,53 @@ export class HomeAlumnosPage implements OnInit {
     try {
       const user = await this.firebaseService.getCurrentUser();
       if (user) {
-        // Aquí deberías obtener el porcentaje real desde tu base de datos
-        // Este es solo un ejemplo
         this.firestore
           .collection('asistencias')
           .doc(user.uid)
           .valueChanges()
           .subscribe((data: any) => {
-            this.porcentajeAsistencia = data?.porcentaje || 85; // valor por defecto 85%
+            this.porcentajeAsistencia = data?.porcentaje || 85;
           });
       }
     } catch (error) {
       console.error('Error al cargar porcentaje de asistencia:', error);
       this.porcentajeAsistencia = 0;
+    }
+  }
+
+  private async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2000,
+      position: 'bottom',
+      color: 'success',
+      cssClass: 'custom-toast'
+    });
+    toast.present();
+  }
+
+  calcularTiempoRestante(fecha: any): string {
+    if (!fecha) return '';
+    
+    // Convertir la fecha si es Timestamp de Firestore
+    const fechaActividad = fecha.toDate ? fecha.toDate() : new Date(fecha);
+    const ahora = new Date();
+    
+    // Si la fecha ya pasó
+    if (fechaActividad < ahora) {
+      return 'Fecha vencida';
+    }
+    
+    const diferencia = fechaActividad.getTime() - ahora.getTime();
+    const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    
+    if (dias > 0) {
+      return `${dias} día${dias !== 1 ? 's' : ''} restante${dias !== 1 ? 's' : ''}`;
+    } else if (horas > 0) {
+      return `${horas} hora${horas !== 1 ? 's' : ''} restante${horas !== 1 ? 's' : ''}`;
+    } else {
+      return 'Menos de 1 hora';
     }
   }
 }

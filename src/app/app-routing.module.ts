@@ -72,9 +72,14 @@ const routes: Routes = [
     loadChildren: () => import('./calificaciones/calificaciones.module').then( m => m.CalificacionesPageModule)
   },
   {
+    path: 'registros-home',
+    loadChildren: () => import('./registros-home/registros-home.module').then( m => m.RegistrosHomePageModule)
+  },
+  {
     path: '**',  // Ruta wildcard para capturar navegaciones no válidas
     redirectTo: 'not-found'
   },
+
 
 ];
 

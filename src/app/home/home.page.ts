@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,17 +8,30 @@ import { Router } from '@angular/router';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  constructor(private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {}
+
+  descargarAPK() {
+    const nombreArchivo = 'RegistraApp.apk';
+    this.http.get(`assets/${nombreArchivo}`, { responseType: 'blob' })
+      .subscribe(
+        (blob: Blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = nombreArchivo;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        },
+        (error) => {
+          console.error('Error al descargar el archivo:', error);
+          alert('Error al descargar el archivo');
+        }
+      );
+  }
 
   navigateTo(path: string) {
     this.router.navigate([path]);
-  }
-
-  irALoginAlumno() {
-    this.router.navigate(['/login-alumno']);
-  }
-
-  irALoginProfesor() {
-    this.router.navigate(['/login-docente']);
   }
 }

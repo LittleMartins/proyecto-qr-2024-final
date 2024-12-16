@@ -12,8 +12,16 @@ interface Actividad {
   id?: string;
   titulo: string;
   descripcion: string;
-  fecha: any; // Timestamp
+  fecha: any;
   estado: 'pendiente' | 'completada';
+  registros?: {
+    [userId: string]: {
+      nombreUsuario: string;
+      fecha: Date;
+      estado: 'completada' | 'pendiente';
+      userId: string;
+    }
+  };
 }
 
 @Component({
@@ -104,14 +112,13 @@ export class HomeDocentesPage implements OnInit, OnDestroy {
         titulo: this.nuevaActividadForm.value.titulo,
         descripcion: this.nuevaActividadForm.value.descripcion,
         fecha: this.nuevaActividadForm.value.fecha,
-        estado: this.nuevaActividadForm.value.estado
+        estado: this.nuevaActividadForm.value.estado,
+        registros: {}
       };
 
-      // Agregar nueva actividad
       await this.firestore.collection('actividades').add(nuevaActividad);
       this.presentToast('Actividad agregada con éxito.');
-
-      this.resetForm(); // Resetear el formulario
+      this.resetForm();
     } else {
       this.presentToast('Por favor, completa todos los campos obligatorios.');
     }
@@ -250,5 +257,15 @@ export class HomeDocentesPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // Asegúrate de desuscribir todos los observables
+  }
+
+  async verRegistrosCompletado(actividad: Actividad) {
+    if (actividad.id) {
+      this.router.navigate(['/registros-home'], {
+        queryParams: {
+          actividadId: actividad.id
+        }
+      });
+    }
   }
 }
