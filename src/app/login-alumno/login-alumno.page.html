@@ -20,13 +20,13 @@
         <div class="form-group">
           <ion-item>
             <ion-icon name="mail-outline" slot="start"></ion-icon>
-            <ion-label position="floating">Correo electrónico</ion-label>
+            <ion-label position="floating">Correo Electrónico</ion-label>
             <ion-input type="email" [(ngModel)]="credentials.email" name="email" required></ion-input>
           </ion-item>
 
           <ion-item>
             <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
-            <ion-label position="floating">Contraseña</ion-label>
+            <ion-label position="floating">Contraseñas</ion-label>
             <ion-input 
               [type]="showPassword ? 'text' : 'password'" 
               [(ngModel)]="credentials.password" 
@@ -58,7 +58,7 @@
         <ion-button expand="block" fill="outline" class="recover-button" (click)="recoverPassword()">
           <div class="button-inner">
             <ion-icon name="key-outline"></ion-icon>
-            <span>Recuperar Contraseña</span>
+            <span>Recuperar Contraseñas</span>
           </div>
         </ion-button>
       </form>
