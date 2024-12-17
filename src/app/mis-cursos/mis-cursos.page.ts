@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ModalController } from '@ionic/angular';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { map } from 'rxjs/operators';
 
 interface Asistencia {
@@ -22,49 +23,76 @@ export class MisCursosPage implements OnInit {
   asistenciaTotal = 0;
   asistenciasPorCurso: { [key: string]: number } = {};
   totalClasesPorCurso: { [key: string]: number } = {};
-  userId: string = 'KOyYOzDtBob6H4m18INiUkR2HKr2';
+  userId: string = '';
   asistenciasPorAsignatura: { [key: string]: Asistencia[] } = {};
 
   constructor(
     private router: Router,
     private alertController: AlertController,
     private firestore: AngularFirestore,
-    private modalController: ModalController
-  ) {}
+    private modalController: ModalController,
+    private auth: AngularFireAuth
+  ) {
+    this.auth.user.subscribe(user => {
+      if (user) {
+        this.userId = user.uid;
+        console.log('ID de usuario actual:', this.userId);
+        this.cargarAsistencias();
+      }
+    });
+  }
 
   ngOnInit() {
-    this.cargarAsistencias();
   }
 
   cargarAsistencias() {
     this.firestore.collection<Asistencia>('asistencias')
-      .valueChanges()
+      .snapshotChanges()
+      .pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as Asistencia;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      )
       .subscribe(asistencias => {
+        // Agregar log para debugging
+        console.log('Asistencias cargadas:', asistencias);
+        console.log('ID de usuario actual:', this.userId);
+
         // Reiniciar contadores
         this.asistenciasPorCurso = {};
         this.totalClasesPorCurso = {};
         this.asistenciasPorAsignatura = {};
 
-        // Agrupar asistencias por asignatura usando el código corto
         asistencias.forEach(asistencia => {
           const codigoCurso = this.obtenerCodigoCurso(asistencia.asignatura);
           
-          // Removemos la verificación de activo
+          // Log para verificar cada asistencia
+          console.log('Procesando asistencia:', {
+            curso: codigoCurso,
+            asistentes: asistencia.asistentes,
+            usuarioPresente: asistencia.asistentes?.includes(this.userId)
+          });
+
           if (!this.asistenciasPorAsignatura[codigoCurso]) {
             this.asistenciasPorAsignatura[codigoCurso] = [];
           }
           this.asistenciasPorAsignatura[codigoCurso].push(asistencia);
 
-          // Contar total de clases
           this.totalClasesPorCurso[codigoCurso] = 
             (this.totalClasesPorCurso[codigoCurso] || 0) + 1;
 
-          // Contar asistencias del usuario
-          if (asistencia.asistentes?.includes(this.userId)) {
+          // Asegurarse de que asistentes existe y es un array
+          if (Array.isArray(asistencia.asistentes) && asistencia.asistentes.includes(this.userId)) {
             this.asistenciasPorCurso[codigoCurso] = 
               (this.asistenciasPorCurso[codigoCurso] || 0) + 1;
           }
         });
+
+        // Log final de contadores
+        console.log('Asistencias por curso:', this.asistenciasPorCurso);
+        console.log('Total clases por curso:', this.totalClasesPorCurso);
 
         // Calcular asistencia total
         let totalAsistencias = 0;
